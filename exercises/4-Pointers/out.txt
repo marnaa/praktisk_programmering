@@ -1,0 +1,13 @@
+Calculated eps double= 2.22045e-16
+From float.h eps double= 2.22045e-16 
+Calculated eps float= 0.000000
+From float.h eps float= 0.000000 
+Calculated eps long double= 2.22045e-16
+From float.h eps long double= 1.0842e-19 
+2)
+max = 1073741823 
+sum_up_float=15.403683
+ sum_down_float= 18.807919 
+sum_up_float=21.371631
+ sum_down_float= 21.371631 
+3)
