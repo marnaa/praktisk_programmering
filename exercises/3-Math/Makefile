@@ -6,6 +6,6 @@ out.txt: math
 math.o: math.c 
 	$(CC) $(CFLAGS) -c math.c -o math.o 
 math: math.o 
-	$(CC) $(CFLAGS) $^ -o  $@ $(LDLIBS) 
+	$(CC) $(CFLAGS) $^ -o  $@  
 clean:
 	$(RM) *.o out* math 

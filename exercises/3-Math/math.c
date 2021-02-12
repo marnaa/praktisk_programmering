@@ -1,5 +1,4 @@
-#include <math.h>
-#include <complex.h>
+#include <tgmath.h>
 #include <stdio.h>
 int main(){
 	double gam=tgamma(5.0);
