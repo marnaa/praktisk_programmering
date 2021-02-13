@@ -11,3 +11,4 @@ sum_up_float=15.403683
 sum_up_float=21.371631
  sum_down_float= 21.371631 
 3)
+Result= 1 

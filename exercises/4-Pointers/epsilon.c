@@ -2,7 +2,6 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
-#include "equal.c"
 // Part don't work on my pc with gcc 
 int main(){
 /*
@@ -56,14 +55,12 @@ int main(){
         printf("sum_down_float= %f \n", sum_down_double);
 	// Exercise 3 
 	printf("3)\n"); 
+	int equal(double a, double b, double tau, double epsilon);
 	double a=1.0;
 	double b=2.0;
 	double eps=4.0;
-	double tau=2.0;
-	
-	int result=equal(a,b,tau, eps);
-	printf("%i", result);
-
-
+	double tau=2.0;	
+	int result = equal(a,b,tau, eps);
+	printf("Result= %d ", result);
 	return 0;
 }
