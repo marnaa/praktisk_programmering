@@ -1,8 +1,17 @@
-Calculated eps double= 2.22045e-16
+exercise epsilon 
+1)
+my max int = 2147483647 
+my INT_MAX = 2147483647 
+my min int = -2147483648 
+my INT_MIN = -2147483648 
+Calculated eps double while = 2.22045e-16
+Calculated eps double do = 2.22045e-16
+Calculated eps double for = 2.22045e-16
 From float.h eps double= 2.22045e-16 
+The rest of for and do's are ignored because of runtime	consideratons 
 Calculated eps float= 0.000000
 From float.h eps float= 0.000000 
-Calculated eps long double= 2.22045e-16
+Calculated eps long double= 1.0842e-19
 From float.h eps long double= 1.0842e-19 
 2)
 max = 1073741823 
@@ -11,4 +20,9 @@ sum_up_float=15.403683
 sum_up_float=21.371631
  sum_down_float= 21.371631 
 3)
-Result= 1 
+Result= 0 
+Exercise Komplextesting komplex_add... 
+ a= (1,2)
+b= (3,4)
+a+b should =  (4,6)
+a+b actually =  (4,6)
