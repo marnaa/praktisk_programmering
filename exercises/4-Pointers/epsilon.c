@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <float.h>
 // Part don't work on my pc with gcc 
+int equal(double a, double b, double tau, double epsilon);
 int main(){
 /*
 	int i=1;
@@ -55,7 +56,6 @@ int main(){
         printf("sum_down_float= %f \n", sum_down_double);
 	// Exercise 3 
 	printf("3)\n"); 
-	int equal(double a, double b, double tau, double epsilon);
 	double a=1.0;
 	double b=2.0;
 	double eps=4.0;
