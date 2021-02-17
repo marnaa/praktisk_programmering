@@ -55,7 +55,7 @@ int main(){
         fx/=2;
         }
         fx*=2;
-        printf("Calculated eps float= %f\n",fx);
+        printf("Calculated eps float= %g\n",fx);
 	/*	
 	// Do loop
 	fx=1;
@@ -70,7 +70,7 @@ int main(){
 	fe*=2;	
 	printf("Calculated eps float for = %f \n", fe);
 	*/
-        printf("From float.h eps float= %f \n", FLT_EPSILON);
+        printf("From float.h eps float= %g \n", FLT_EPSILON);
 	
 	long double lx=1;
         while(1+lx!=1){
