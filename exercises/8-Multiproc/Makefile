@@ -1,4 +1,4 @@
-CFLAGS = -Wall -O1
+CFLAGS = -Wall -Ofast
 CFLAGS += -pthread
 CFLAGS += -fopenmp
 LDLIBS = -lm -lgomp

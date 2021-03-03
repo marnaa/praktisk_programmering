@@ -13,7 +13,7 @@ void* function(void* arg){
 	for(double i=0; i<=N; i+=1){
 		double x = (double) rand_r(&seed)/RAND_MAX;
 		double y = (double) rand_r(&seed)/RAND_MAX;
-		if(sqrt(pow(x,2)+pow(y,2))<=1){
+		if(x*x+y*y<=1){
 			pse_count+=1;
 		}
 		else{
@@ -24,7 +24,7 @@ void* function(void* arg){
 }
 
 int main(){
-	double N = 1e9;
+	double N = 1e8;
 	double n1=N/3, n2=N/3, n3=N/3;
 	double calN= n1+n2+n3;
 	unsigned int seed1=0, seed2=0, seed3=0;

@@ -4,7 +4,7 @@
 #include <omp.h>
 
 int main(){
-	double N = 1e9;
+	double N = 1e8;
 	double n1=N/3, n2=N/3, n3=N/3;
 	double calN= n1+n2+n3;
 	unsigned int seed1=0, seed2=0, seed3=0;
@@ -16,7 +16,7 @@ int main(){
 			for(double i=0; i<=n1; i+=1){
 			double x = (double) rand_r(&seed1)/RAND_MAX;
 			double y = (double) rand_r(&seed1)/RAND_MAX;
-			if(sqrt(pow(x,2)+pow(y,2))<=1){
+			if(x*x+y*y<=1){
 				count1+=1;
                 	}
                 	else{
@@ -28,7 +28,7 @@ int main(){
 			for(double i=0; i<=n2; i+=1){
 				double x = (double) rand_r(&seed2)/RAND_MAX;
 				double y = (double) rand_r(&seed2)/RAND_MAX;
-				if(sqrt(pow(x,2)+pow(y,2))<=1){
+				if(x*x+y*y<=1){
 					count2+=1;
                 		}
                 		else{
@@ -40,7 +40,7 @@ int main(){
 			for(double i=0; i<=n3; i+=1){
 			double x = (double) rand_r(&seed3)/RAND_MAX;
 			double y = (double) rand_r(&seed3)/RAND_MAX;
-			if(sqrt(pow(x,2)+pow(y,2))<=1){
+			if(x*x+y*y<=1){
 				count3+=1;
                 	}
                 	else{
