@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphics}
+\usepackage{listings}
+\title{Implementation of exponential function in C}
+\author{Martin Aagaard}
+\date{}
+\begin{document}
+\maketitle 
+\begin{abstract}
+In this short report an implementation of the exponential function
+will be investigated.  
+\end{abstract}
+
+\section{The exponential function}
+The exponential function is widely known and used and can be defined through the
+property that $\frac{d y(x)}{dx} = y$ if $y(x)=e^x$. The exponential function
+appears many places e.g. in physics which necessitates an implementation in
+computer languages. One way to do this is through the taylor series of the
+exponential function, 
+
+\begin{align}
+e^x=\sum^{\infty}_{n=0} \frac{x^n}{n!} \label{Taylor_exp} \; . 
+\end{align}
+
+\section{Implementation}
+From the taylor series it is seen that one can take factor out factors of x and 
+n leading to an expression on the following form:
+\begin{align}
+1+x\cdot(1+\frac{x}{2}\cdot(1+\frac{x}{3}\cdot(...))) \; .
+\end{align}
+This odd form of writing the series minimizes the number of time a program would
+need to multiply and through that minimizing the operation time. 
+In C a final implementation could look like:
+\begin{lstlisting}[language=C]
+double ex(double x){
+if(x<0)return 1/ex(-x);
+if(x>1./8)return pow(ex(x/2),2);
+return 1+x*(1+x/2*(1+x/3*(1+x/4*(1+x/5*(1+x/6*(1+x/7*(1+
+x/8*(1+x/9*(1+x/10)))))))));
+} . 
+\end{lstlisting}
+Here the if statements make sure that the value of x is significantly small. 
+This allows us to include fewer terms of the taylor series.
+
+\section{Result}
+The implementation is now compared to the exp-function from math.h. The result
+is seen in figure~(\ref{fig:exp})
+	\begin{figure}
+\input{exp_plot}
+\caption{Implementated exponential function (Implexp) compared with the math.h 
+implemantation(exp) via gnuplot "latex" terminal.}
+\label{fig:exp}
+	\end{figure} 
+
+\end{document}
+

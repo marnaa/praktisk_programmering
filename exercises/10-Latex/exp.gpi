@@ -1,0 +1,7 @@
+set terminal epslatex
+set xlabel "$x$"
+set ylabel "$y$"
+set yrange [-10:*]
+set output "exp_plot.tex"
+plot "out.data.txt" using 1:2 with lines title "ImplExp" \
+,"out.data.txt" using 1:3 with lines title "exp"
