@@ -40,7 +40,12 @@ return 1+x*(1+x/2*(1+x/3*(1+x/4*(1+x/5*(1+x/6*(1+x/7*(1+
 x/8*(1+x/9*(1+x/10)))))))));
 } . 
 \end{lstlisting}
-Here the if statements make sure that the value of x is significantly small. 
+Here the if statements make sure that the value of x is significantly small to
+use double precision and not negative since summing alternating values will make
+the routine lose precision from subtracting and adding small numbers.
+As for significantly small values of x, it is here calculated that for
+$10^{-15}$ precision with 10 terms, a value of x smaller than $\frac{1}{8}$ is 
+needed. 
 This allows us to include fewer terms of the taylor series.
 
 \section{Result}
