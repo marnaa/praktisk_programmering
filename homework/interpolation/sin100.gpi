@@ -1,0 +1,11 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set tics out
+set output "intSin100Point.png"
+plot "out.100.txt" using 1:2 with points title "int val" \
+,"out.100.txt" using 1:3 with points title "-integral val+1"\
+,"out.100.txt" using 1:4 with points pointtype 12 title "gsl: int val" \
+,"out.100.txt" using 1:5 with points title "gsl: -integral val+1"\
+,"out.xy.txt" using 1:2 with lines title "sin(x)"\
+,"out.xy.txt" using 1:3 with lines title "cos(x)"\
