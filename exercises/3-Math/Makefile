@@ -1,6 +1,9 @@
 CC= gcc
 CFLAGS= -O
-LDLIBS=-lm 
+LDLIBS=-lm
+
+all: out.txt
+
 out.txt: math 
 	./math > out.txt
 math.o: math.c 

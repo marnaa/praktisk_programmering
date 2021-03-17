@@ -102,15 +102,56 @@ cspline* cspline_make(gsl_vector* x, gsl_vector* y){
 
 
 //FUNCTION FOR EVALUATING THE SPLINE IN A GIVEN Z
-double ceval(cspline* s, double z){
-        int i = binsearch(s->x, z);
-        double h = z - gsl_vector_get(s->x,i);
-	double bi = gsl_vector_get(s->b,i);
-	double ci = gsl_vector_get(s->c,i);
-	double di = gsl_vector_get(s->d,i);
-	double val = gsl_vector_get(s->y,i)+h*(bi+h*(ci+h*di));
-        return val;
-        }
+double ceval(cspline* s, double z) {
+    int i = binsearch(s->x, z);
+    double h = z - gsl_vector_get(s->x, i);
+    double bi = gsl_vector_get(s->b, i);
+    double ci = gsl_vector_get(s->c, i);
+    double di = gsl_vector_get(s->d, i);
+    double val = gsl_vector_get(s->y, i) + h * (bi + h * (ci + h * di));
+    return val;
+}
+
+double cint(cspline* s, double z){
+    int j = binsearch(s->x,z);
+    double intval = 0;
+    for(int i=0; i<j; i++){
+        double yi = gsl_vector_get(s->y,i);
+        double bi = gsl_vector_get(s->b,i);
+        double ci = gsl_vector_get(s->c,i);
+        double di = gsl_vector_get(s->d,i);
+        double xi = gsl_vector_get(s->x,i), xii = gsl_vector_get(s->x,i+1);
+        double a = yi-bi*xi+ci*xi*xi-di*pow(xi,3);
+        double b = bi-2*xi*ci+3*di*xi*xi;
+        double c = ci-3*xi*di;
+        double stepval = a*(xii-xi)+0.5*b*(xii*xii-xi*xi)+1./3*c*(xii*xii*xii-xi*xi*xi)+1./4*di*(pow(xii,4)-pow(xi,4));
+        intval+=stepval;
+    }
+    double yj = gsl_vector_get(s->y,j);
+    double bj = gsl_vector_get(s->b,j);
+    double cj = gsl_vector_get(s->c,j);
+    double dj = gsl_vector_get(s->d,j);
+    double xj = gsl_vector_get(s->x,j);
+    double a = yj-bj*xj+cj*xj*xj-dj*pow(xj,3);
+    double b = bj-2*xj*cj+3*dj*xj*xj;
+    double c = cj-3*xj*dj;
+    double stepval = a*(z-xj)+0.5*b*(z*z-xj*xj)+1./3*c*(z*z*z-xj*xj*xj)+1./4*dj*(pow(z,4)-pow(xj,4));
+    intval+=stepval;
+    return intval;
+}
+
+double cdiff(cspline* s, double z){
+    int j = binsearch(s->x,z);
+    double bj = gsl_vector_get(s->b,j);
+    double cj = gsl_vector_get(s->c,j);
+    double dj = gsl_vector_get(s->d,j);
+    double xj = gsl_vector_get(s->x,j);
+    double b = bj-2*xj*cj+3*dj*xj*xj;
+    double c = cj-3*xj*dj;
+    return b+2*c*z+3*dj*z*z;
+}
+
+
 //FREEING THE ALLOCATED MEMORY
 void cspline_free(cspline* s){
 	gsl_vector_free(s->x);
@@ -121,70 +162,42 @@ void cspline_free(cspline* s){
 	free(s);
 	}
 int main(){
-	int n = 5;
-	gsl_vector* x = gsl_vector_alloc(5);
-	gsl_vector* y = gsl_vector_alloc(5);
-	gsl_vector* yx = gsl_vector_alloc(5);
-	gsl_vector* yxx = gsl_vector_alloc(5);
-	gsl_vector* y3x = gsl_vector_alloc(5);
+    FILE* cxandy = fopen("out.cxy.txt","w");
+    FILE* cout = fopen("out.cdata.txt","w");
+	int n = 100;
+	gsl_vector* x = gsl_vector_alloc(n);
+	gsl_vector* siny = gsl_vector_alloc(n);
+	gsl_vector* cosy = gsl_vector_alloc(n);
 	double xa[n];
-	double yk[n];
 	double ya[n];
-	double yaa[n];
-	double y3a[n];
 	for(int i=0; i<n; i++){
-	gsl_vector_set(x,i,(double)i);
-	gsl_vector_set(y,i,1.0);
-	gsl_vector_set(yx,i,(double)i);
-	gsl_vector_set(yxx,i,(double)(i*i));
-	gsl_vector_set(y3x,i,(double)(i*i*i));
-	xa[i]=(double) i;
-	yk[i]=1.;
-	ya[i]=(double) i;
-	yaa[i]=(double)(i*i);
-	y3a[i]=(double) (i*i*i);
+	    double xi = ((double) i)/n*2*M_PI;
+	    gsl_vector_set(x,i,xi);
+	    gsl_vector_set(siny,i,sin(xi));
+	    gsl_vector_set(cosy,i,cos(xi));
+	    xa[i]=xi;
+	    ya[i]=sin(xi);
 	}
-	cspline* s = cspline_make(x,y);
-	cspline* sx = cspline_make(x,yx);
-	cspline* sxx = cspline_make(x,yxx);
-	cspline* s3x = cspline_make(x,y3x);
-	gsl_interp* c = gsl_interp_alloc(gsl_interp_cspline,n);
-	gsl_interp* ca = gsl_interp_alloc(gsl_interp_cspline,n);
-	gsl_interp* caa = gsl_interp_alloc(gsl_interp_cspline,n);
-	gsl_interp* c3a = gsl_interp_alloc(gsl_interp_cspline,n);
-	gsl_interp_init(c,xa,yk,n);
-	gsl_interp_init(ca,xa,ya,n);
-	gsl_interp_init(caa,xa,yaa,n);
-	gsl_interp_init(c3a,xa,y3a,n);
-	for(int i=0; i<n-1; i++){
-		double z = ((double)i+0.5) ;
-		printf("Evaluation point, z: %g\n",z);
-		double zk=gsl_interp_eval(c,xa,yk,z,NULL);
-		double za=gsl_interp_eval(ca,xa,ya,z,NULL);
-		double zaa=gsl_interp_eval(caa,xa,yaa,z,NULL);
-		double z3a=gsl_interp_eval(c3a,xa,y3a,z,NULL);
-		printf("Homemade spline:\n");
-		printf("c: %g l: %g q: %g  s: %g\n",ceval(s,z),ceval(sx,z),ceval(sxx,z),ceval(s3x,z));
-		printf("gsl Spline:\n");
-		printf("c: %g l: %g q :%g  s: %g\n",zk, za, zaa, z3a);
+	cspline* s = cspline_make(x,siny);
+    gsl_interp* c = gsl_interp_alloc(gsl_interp_cspline,n);
+	gsl_interp_init(c,xa,ya,n);
+	int count=0;
+	while(count<100){
+	    count++;
+        double z = (double)rand()/(double) RAND_MAX*gsl_vector_get(x,n-2);
+		double za=gsl_interp_eval(c,xa,ya,z,NULL);
+		double zdiff = gsl_interp_eval_deriv(c,xa,ya,z,NULL);
+		double zint = gsl_interp_eval_integ(c,xa,ya,gsl_vector_get(x,0),z,NULL);
+		fprintf(cout,"%g %g %g %g %g %g %g\n",z,ceval(s,z), -cint(s,z)+1,cdiff(s,z),za,-zint+1,zdiff);
 	}
-	printf("Spline values:\n");
-	for(int i=0; i<n-1; i++){
-		double a=gsl_vector_get(sxx->y,i);
-		double b=gsl_vector_get(sxx->b,i);
-		double c=gsl_vector_get(sxx->c,i);
-		double d=gsl_vector_get(sxx->d,i);
-		printf("y_i: %g  b: %g c: %g d: %g\n",a,b,c,d);
-	}
+    for(int i=0; i<n;i++) {
+        fprintf(cxandy, "%g %g %g\n", gsl_vector_get(x, i),
+                gsl_vector_get(siny, i), gsl_vector_get(cosy, i));
+    }
 	cspline_free(s);
 	gsl_vector_free(x);
-	gsl_vector_free(y);
-	gsl_vector_free(yx);
-	gsl_vector_free(yxx);
-	gsl_vector_free(y3x);
+	gsl_vector_free(cosy);
+	gsl_vector_free(siny);
 	gsl_interp_free(c);
-	gsl_interp_free(ca);
-	gsl_interp_free(caa);
-	gsl_interp_free(c3a);
 	return 0;
 }

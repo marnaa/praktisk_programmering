@@ -32,7 +32,7 @@ double linterp_integ(gsl_vector* x, gsl_vector* y, double z){
         double xj = gsl_vector_get(x,j), xjj = gsl_vector_get(x,j+1);
         double yj = gsl_vector_get(y,j), yjj = gsl_vector_get(y,j+1);
 	double a = (yjj-yj)/(xjj-xj);
-        intfz += 0.5*a*(xjj*xjj-xj*xj)-a*xj*(xjj-xj)+yj*(xjj-xj);
+        intfz += 0.5*a*(xjj*xjj-xj*xj)+(yj-a*xj)*(xjj-xj);
 	}
 	double xi = gsl_vector_get(x,i), xii = gsl_vector_get(x,i+1);
         double yi = gsl_vector_get(y,i), yii = gsl_vector_get(y,i+1);

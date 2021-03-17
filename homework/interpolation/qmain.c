@@ -76,15 +76,50 @@ qspline* qspline_make(gsl_vector* x, gsl_vector* y){
 }
 
 //FUNCTION FOR EVALUATING THE SPLINE IN A GIVEN Z
-double qeval(qspline* s, double z){
-        int i = binsearch(s->x, z);
-        double h = z - gsl_vector_get(s->x,i);
-	double bi = gsl_vector_get(s->b,i);
-	double ci = gsl_vector_get(s->c,i);
-	double yi = gsl_vector_get(s->y,i);
-	double val = yi+h*(bi+h*ci);
-	return val;
-        }
+double qeval(qspline* s, double z) {
+    int i = binsearch(s->x, z);
+    double h = z - gsl_vector_get(s->x, i);
+    double bi = gsl_vector_get(s->b, i);
+    double ci = gsl_vector_get(s->c, i);
+    double yi = gsl_vector_get(s->y, i);
+    double val = yi + h * (bi + h * ci);
+    return val;
+}
+
+double qint(qspline* s, double z){
+    int j = binsearch(s->x,z);
+    double intval = 0;
+    for(int i=0; i<j; i++){
+        double yi = gsl_vector_get(s->y,i);
+        double bi = gsl_vector_get(s->b,i);
+        double ci = gsl_vector_get(s->c,i);
+        double xi = gsl_vector_get(s->x,i), xii = gsl_vector_get(s->x,i+1);
+        double a = yi-bi*xi+ci*xi*xi;
+        double b = bi-2*xi*ci;
+        double stepval = ((a*(xii-xi)+0.5*b*(xii*xii-xi*xi)+1./3*ci*(xii*xii*xii-xi*xi*xi)));
+        intval+=stepval;
+    }
+    double yj = gsl_vector_get(s->y,j);
+    double bj = gsl_vector_get(s->b,j);
+    double cj = gsl_vector_get(s->c,j);
+    double xj = gsl_vector_get(s->x,j);
+    double a = yj-bj*xj+cj*xj*xj;
+    double b = bj-2*xj*cj;
+    double stepval = a*(z-xj)+0.5*b*(z*z-xj*xj)+1./3*cj*(z*z*z-xj*xj*xj);
+    intval+=stepval;
+    return intval;
+}
+
+double qdiff(qspline* s, double z){
+    int j = binsearch(s->x,z);
+    double bj = gsl_vector_get(s->b,j);
+    double cj = gsl_vector_get(s->c,j);
+    double xj = gsl_vector_get(s->x,j);
+    double b = bj-2*xj*cj;
+    return b+2*cj*z;
+}
+
+
 //FREEING THE ALLOCATED MEMORY
 void qspline_free(qspline* s){
 	gsl_vector_free(s->x);
@@ -94,28 +129,33 @@ void qspline_free(qspline* s){
 	free(s);
 	}
 int main(){
-	int n = 5;
-	gsl_vector* x = gsl_vector_alloc(5);
-	gsl_vector* y = gsl_vector_alloc(5);
-	gsl_vector* yx = gsl_vector_alloc(5);
-	gsl_vector* yxx = gsl_vector_alloc(5);
+	int n = 100;
+	FILE* qxandy = fopen("out.qxy.txt","w");
+    FILE* qout = fopen("out.qdata.txt","w");
+	gsl_vector* x = gsl_vector_alloc(n);
+	gsl_vector* cosy = gsl_vector_alloc(n);
+	gsl_vector* siny = gsl_vector_alloc(n);
 	for(int i=0; i<n; i++){
-	gsl_vector_set(x,i, (double)i);
-	gsl_vector_set(y,i, 1.0);
-	gsl_vector_set(yx,i,(double)i);
-	gsl_vector_set(yxx,i,(double)i*i);
-        }
-	qspline* s = qspline_make(x,y);
-	qspline* sx = qspline_make(x,yx);
-	qspline* sxx = qspline_make(x,yxx);
-	for(int i=0; i<n; i++){
-		double z = (double) i+0.3;
-		printf("%g %g %g\n", qeval(s,z),qeval(sx,z),qeval(sxx,z));
+	    double xi = ((double) i)/n*2*M_PI;
+	    gsl_vector_set(x,i,xi);
+	    gsl_vector_set(siny,i, sin(xi));
+	    gsl_vector_set(cosy,i, cos(xi));
 	}
+	qspline* s = qspline_make(x,siny);
+	int count=0;
+	printf("her");
+	while(count<100){
+	    count+=1;
+        double z = (double)rand()/(double) RAND_MAX*gsl_vector_get(x,n-2);
+		fprintf(qout,"%g %g %g %g\n", z, qeval(s,z),-qint(s,z)+1,qdiff(s,z));
+	}
+    for(int i=0; i<n;i++) {
+        fprintf(qxandy, "%g %g %g\n", gsl_vector_get(x, i),
+                gsl_vector_get(siny, i), gsl_vector_get(cosy, i));
+    }
 	qspline_free(s);
 	gsl_vector_free(x);
-	gsl_vector_free(y);
-	gsl_vector_free(yx);
-	gsl_vector_free(yxx);
+	gsl_vector_free(cosy);
+	gsl_vector_free(siny);
 	return 0;
 }

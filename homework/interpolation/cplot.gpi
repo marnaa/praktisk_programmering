@@ -1,0 +1,12 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set output "cplot.png"
+plot "out.cdata.txt" using 1:2 with points title "interp val" \
+,"out.cdata.txt" using 1:3 with points pointsize 2 title "-integral val+1"\
+,"out.cdata.txt" using 1:4 with points title "diff val" \
+,"out.cdata.txt" using 1:5 with points title "gsl: interp val" \
+,"out.cdata.txt" using 1:6 with points pointtype 15 title "gsl: -integral val+1"\
+,"out.cdata.txt" using 1:7 with points title "gsl: diff val" \
+,"out.cxy.txt" using 1:2 with lines title "sin(x)"\
+,"out.cxy.txt" using 1:3 with lines title "cos(x)"\
