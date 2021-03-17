@@ -158,14 +158,15 @@ int main(){
 	gsl_interp_init(c3a,xa,y3a,n);
 	for(int i=0; i<n-1; i++){
 		double z = ((double)i+0.5) ;
-		printf("%g\n",z);
+		printf("Evaluation point, z: %g\n",z);
 		double zk=gsl_interp_eval(c,xa,yk,z,NULL);
 		double za=gsl_interp_eval(ca,xa,ya,z,NULL);
 		double zaa=gsl_interp_eval(caa,xa,yaa,z,NULL);
 		double z3a=gsl_interp_eval(c3a,xa,y3a,z,NULL);
-		printf("%g %g %g %g %g %g %g %g\n", 
-		ceval(s,z),ceval(sx,z),ceval(sxx,z),ceval(s3x,z),
-		zk, za, zaa, z3a);
+		printf("Homemade spline:\n");
+		printf("c: %g l: %g q: %g  s: %g\n",ceval(s,z),ceval(sx,z),ceval(sxx,z),ceval(s3x,z));
+		printf("gsl Spline:\n");
+		printf("c: %g l: %g q :%g  s: %g\n",zk, za, zaa, z3a);
 	}
 	printf("Spline values:\n");
 	for(int i=0; i<n-1; i++){
@@ -173,7 +174,7 @@ int main(){
 		double b=gsl_vector_get(sxx->b,i);
 		double c=gsl_vector_get(sxx->c,i);
 		double d=gsl_vector_get(sxx->d,i);
-		printf("%g %g %g %g\n",a,b,c,d);
+		printf("y_i: %g  b: %g c: %g d: %g\n",a,b,c,d);
 	}
 	cspline_free(s);
 	gsl_vector_free(x);
