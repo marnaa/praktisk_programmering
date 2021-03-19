@@ -1,0 +1,8 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set output "compareplot.png"
+plot "out.compare.txt" using 1:2 with points title "our QR" \
+,"out.compare.txt" using 1:3 with points title "gsl QR"\
+
+
