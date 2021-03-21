@@ -1,0 +1,11 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set output "fitplot.png"
+plot 'out.fitdat.txt' with errorbars title "Data"\
+, "out.fitfunc.txt" using 1:2 with lines title "fit func" \
+,"out.fitfunc.txt" using 1:3 with lines title "fit func + std" \
+,"out.fitfunc.txt" using 1:4 with lines title "fit func - std" \
+
+
+

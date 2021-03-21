@@ -1,0 +1,8 @@
+Covariance Matix:
+0.356 -0.035 
+-0.035 0.005 
+Params and Halflife:
+c0 = 4.95867
+c1 (lambda) = -0.171379
+calc T_(1/2) = (4.04452 +/- 0.0707107) days
+real T_(1/2) = 3.63 days
