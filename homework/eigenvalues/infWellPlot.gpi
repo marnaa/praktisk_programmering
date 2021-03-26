@@ -1,0 +1,15 @@
+set terminal png
+set ylabel "Re(psi)"
+set xlabel "x"
+set title "Calculated and Exact Wavefunctions normalized to fit"
+set yrange[-1.5:1.5]
+set output "infWellplot.png"
+plot "out.infWell.txt" using 1:2 with lines title "Psi 1" \
+,"out.infWell.txt" using 1:3 with lines title "Psi 2" \
+,"out.infWell.txt" using 1:4 with lines title "Psi 3" \
+,"out.infWell.txt" using 1:5 with points title "Exact 1" \
+,"out.infWell.txt" using 1:6 with points title "Exact 2" \
+,"out.infWell.txt" using 1:7 with points title "Exact 3" \
+
+
+

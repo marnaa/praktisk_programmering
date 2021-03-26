@@ -1,0 +1,15 @@
+set terminal png
+set ylabel "time [s]"
+set xlabel "N"
+set title "Test of time used"
+set output "timeplot.png"
+set key left
+plot "out.compare.txt" using 1:2 with lines title "Jacobi" \
+,"out.compare.txt" using 1:3 with lines title "GSL" \
+,"out.compare.txt" using 1:4 with lines title "Jacobi UT" \
+,"out.compare.txt" using 1:5 with points title "(Nj)^3" \
+,"out.compare.txt" using 1:6 with points title "(Ngsl)^3" \
+,"out.compare.txt" using 1:7 with points title "(UTn)^3" \
+
+
+

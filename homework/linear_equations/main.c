@@ -14,7 +14,7 @@ void matrix_print(gsl_matrix* A,FILE* fil){
     for(int i=0; i<(A->size1);i++){
         for(int j=0; j<(A->size2); j++){
             double Aij = gsl_matrix_get(A,i,j);
-            fprintf(fil, "%0.3g ",Aij);
+            fprintf(fil, "%0.3f  ",Aij);
         }
         fprintf(fil,"\n");
     }
@@ -155,7 +155,6 @@ int main(){
         gsl_matrix* G =gsl_matrix_alloc(N,N);
         gsl_matrix* gslM = gsl_matrix_alloc(N,N);
         gsl_vector* gslTau = gsl_vector_alloc(N);
-        gsl_matrix_memcpy(gslM,M);
         for(int j=0; j<(M->size2); j++){
             for(int i = 0; i<(M->size1);i++){
                 double Mij = (double) rand()/RAND_MAX*40;
@@ -163,6 +162,7 @@ int main(){
                 gsl_matrix_set(M,i,j,Mij);
             }
         }
+        gsl_matrix_memcpy(gslM,M);
         clock_t tik, tok, gsltik, gsltok;
         double timeUsed, gslTimeUsed;
         tik=clock();
