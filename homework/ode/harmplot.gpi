@@ -1,0 +1,6 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set output "harmOscillator.png"
+plot "out.harmosc.txt" using 1:2 with lines title "Integrated sol" \
+,"out.harmosc.txt" using 1:3 with lines title "Exact sol"\
