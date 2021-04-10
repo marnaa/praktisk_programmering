@@ -67,7 +67,7 @@ void jacobi_diag(gsl_matrix* A, gsl_matrix* V){
         }
     } while (changed!=0);
 }
-void jacobi_diag_UT(gsl_matrix* A, gsl_matrix* V){
+void jacobi_diag_opt(gsl_matrix* A, gsl_matrix* V){
     int changed=0;
     int count=0;
     int n = A->size1;
@@ -122,7 +122,7 @@ int main(){
     matrix_print(A,test);
 
 
-    jacobi_diag_UT(A,V);
+    jacobi_diag_opt(A,V);
 
 
     gsl_matrix_memcpy(Vcpy,V);
@@ -269,7 +269,10 @@ int main(){
         gsl_matrix_free(gslM);
         gsl_matrix_free(gslV);
         gsl_vector_free(gslS);
-
+        fclose(test);
+        fclose(infWellE);
+        fclose(infWell);
+        fclose(compare);
     }
     return 0;
 }

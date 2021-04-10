@@ -1,0 +1,10 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set title "three body curve"
+set output "threebody.png"
+plot "out.3body.txt" using 2:3 with lines title "m1" \
+,"out.3body.txt" using 4:5 with lines title "m2"\
+,"out.3body.txt" using 6:7 with lines title "m3"\
+
+
