@@ -82,19 +82,19 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         if(dy<tol){
             k++;
             if(k>=steps){
-                return -k;
-                //printf("Her %i\n",k);
-                #warning original memory to small additional is added
-                *Yal = realloc(*Yal, sizeof(double)*(n*(k+1)));
-                *Xal = realloc(*Xal, sizeof(double)*(k+1));
+                return -k ;
+                printf("Her %i\n",k);
+                Yal = realloc(*Yal, sizeof(double)*(n*(k+1)));
+                Xal = realloc(*Xal, sizeof(double)*(k+1));
                 Y = gsl_matrix_view_array(*Yal, k+1, n);
                 X = gsl_vector_view_array(*Xal,k+1);
-
+                printf("%g",gsl_vector_get(&X.vector,0));
             }
             xpos+=h;
             //printf("xpos: %g h: %g\n",xpos, h);
             //printf("first row at k: %i\n", k);
-            //matrix_print(&Y.matrix,stdout);
+            //printf("%li %i\n",(&X.vector)->size,k);
+            //gsl_vector_fprintf(stdout,&X.vector,"%g");
             gsl_vector_set(&X.vector,k,xpos);
             gsl_matrix_set_row(&Y.matrix,k,yplaceholder);
             //gsl_vector_view fr = gsl_matrix_row(&Y.matrix,0);
@@ -257,8 +257,7 @@ int main(){
 
     //3-body system
 
-    double c=0., d=8.;
-    int j;
+    double c=0., d=9.;
     gsl_vector* vec0 = gsl_vector_calloc(12);
     gsl_vector* vecplace = gsl_vector_calloc(12);
     gsl_vector* err = gsl_vector_calloc(12);
@@ -289,24 +288,13 @@ int main(){
     gsl_vector_set(vec0,9,dr2y);
     gsl_vector_set(vec0,10,dr3x);
     gsl_vector_set(vec0,11,dr3y);
-    /*
-    rkstep12(threebody,0,vec0,0.07,vecplace,err);
-    gsl_vector_fprintf(stdout,vec0,"%g");
-    printf("one run:\n");
-    gsl_vector_fprintf(stdout,vecplace,"%g");
-    printf("one run:\n");
-    gsl_vector_fprintf(stdout,err,"%g");
-    printf("norm: %g\n",gsl_blas_dnrm2(err));
-     */
     double N=12;
-    double M=100;
+    double M=200;
     double ABS =0.01;
     double EPS = 0.01;
     double* Ral = malloc(sizeof(double)*(M*N));
     double* Zal = malloc(sizeof(double)*(M));
-    printf("her\n");
-    j = bby_driver(threebody,c,vec0,&Ral,M,&Zal,d,0.001 ,ABS,EPS);
-    printf("Ogsaa her?");
+    int j = bby_driver(threebody,c,vec0,&Ral,M,&Zal,d,0.001 ,ABS,EPS);
     gsl_matrix_view r = gsl_matrix_view_array(Ral, M, N);
     gsl_vector_view Z = gsl_vector_view_array(Zal, M);
     for(int i =0; i<M;i++){

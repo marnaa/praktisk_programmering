@@ -95,6 +95,7 @@ double Fb2(double x){
 
 
 int main(){
+    FILE* pi_compare = fopen("out.piCompare.txt","w");
     double a = 0., b=1., acc = 0.0001, eps = 0.;
     double fa1 = integrater(Fa1,a,b,acc,eps);
     double fa2 = integrater(Fa2,a,b,acc,eps);
@@ -108,5 +109,8 @@ int main(){
     printf("acc= %g ; eps = %g",acc,eps);
     printf( "Int: int(4*sqrt(1-x^2),0..1)=%.16f\n", fa2);
     printf("CC-int: int(4*sqrt(1-x^2),0..1)=%.16f\n",ha2);
+    for(int i=0; i<10; i++){
+        for
+    }
     return 0;
 }
