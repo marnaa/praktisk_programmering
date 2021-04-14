@@ -74,8 +74,8 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         gsl_vector_view yx = gsl_matrix_row(&Y.matrix,k);
         //printf("%i %i %i\n",(&Y.matrix)->size1,(&Y.matrix)->size2,(&yx.vector)->size);
         rkstep12(f,xpos,&yx.vector,h, yplaceholder,err);
-        printf("ny\n");
-        gsl_vector_fprintf(stdout,yplaceholder,"%g");
+        //printf("ny\n");
+        //gsl_vector_fprintf(stdout,yplaceholder,"%g");
         dy = gsl_blas_dnrm2(err);
         normy = gsl_blas_dnrm2(yplaceholder);
         tol = (normy*eps+acc)*sqrt(h/(b-a));
@@ -146,7 +146,6 @@ void SIR3(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,1,didt);
     gsl_vector_set(dydx,2,drdt);
 }
-
 void threebody( double x, gsl_vector* y, gsl_vector* dydx){
     double G = 1.;
     double m1 = 1.;
@@ -164,9 +163,9 @@ void threebody( double x, gsl_vector* y, gsl_vector* dydx){
     double dr2y = gsl_vector_get(y,9);
     double dr3x = gsl_vector_get(y,10);
     double dr3y = gsl_vector_get(y,11);
-    double r1r2 = sqrt(pow((r1x-r2x),2)*pow((r1y-r2y),2));
-    double r1r3 = sqrt(pow((r1x-r3x),2)*pow((r1y-r3y),2));
-    double r2r3 = sqrt(pow((r2x-r3x),2)*pow((r2y-r3y),2));
+    double r1r2 = sqrt(pow((r1x-r2x),2)+pow((r1y-r2y),2));
+    double r1r3 = sqrt(pow((r1x-r3x),2)+pow((r1y-r3y),2));
+    double r2r3 = sqrt(pow((r2x-r3x),2)+pow((r2y-r3y),2));
     assert(r1r2>0);
     assert(r2r3>0);
     assert(r1r3>0);
@@ -258,7 +257,7 @@ int main(){
 
     //3-body system
 
-    double c=0., d=3.;
+    double c=0., d=8.;
     int j;
     gsl_vector* vec0 = gsl_vector_calloc(12);
     gsl_vector* vecplace = gsl_vector_calloc(12);
@@ -300,9 +299,9 @@ int main(){
     printf("norm: %g\n",gsl_blas_dnrm2(err));
      */
     double N=12;
-    double M=10000;
-    double ABS =0.001;
-    double EPS = 0.001;
+    double M=100;
+    double ABS =0.01;
+    double EPS = 0.01;
     double* Ral = malloc(sizeof(double)*(M*N));
     double* Zal = malloc(sizeof(double)*(M));
     printf("her\n");
