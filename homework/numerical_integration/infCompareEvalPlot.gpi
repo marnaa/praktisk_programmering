@@ -1,0 +1,9 @@
+set terminal png
+set xlabel "abs rel"
+set ylabel "number of evaluation"
+set output "infCompareEvalPlot.png"
+set key left top
+set title "Integrals of exp(-x^2) number of evaluations"
+plot "out.infCompare.txt" using 1:8 with lines title "[0,inf]" \
+,"out.infCompare.txt" using 1:9 with lines title "[-inf,0]"\
+,"out.infCompare.txt" using 1:10 with lines title "[-inf,inf]"\

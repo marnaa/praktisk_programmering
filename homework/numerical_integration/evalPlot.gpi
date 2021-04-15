@@ -1,0 +1,7 @@
+set terminal png
+set xlabel "abs rel"
+set ylabel "evaluations"
+set output "evalPlot.png"
+set key left top
+plot "out.piCompare.txt" using 1:5 with lines title "no CC" \
+,"out.piCompare.txt" using 1:6 with lines title "CC"\
