@@ -54,7 +54,7 @@ void rkstep12(void f(double x, gsl_vector* y, gsl_vector* dydx)
 
 int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         ,double a, gsl_vector* ya, double **Yal,
-        double steps, double **Xal, double b, double h,
+        int steps, double **Xal, double b, double h,
         double acc, double eps){
     /*Y is space for the solution it should be of the size n*m where
      m is assumed number of steps and n is the dimensionality of the problem*/
@@ -82,12 +82,14 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         if(dy<tol){
             k++;
             if(k>=steps){
-                return -k ;
+                return -k; //Too few steps;
                 printf("Her %i\n",k);
                 Yal = realloc(*Yal, sizeof(double)*(n*(k+1)));
                 Xal = realloc(*Xal, sizeof(double)*(k+1));
                 Y = gsl_matrix_view_array(*Yal, k+1, n);
+                printf("Her %i\n",k);
                 X = gsl_vector_view_array(*Xal,k+1);
+                printf("Her %i\n",k);
                 printf("%g",gsl_vector_get(&X.vector,0));
             }
             xpos+=h;
@@ -98,7 +100,6 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
             gsl_vector_set(&X.vector,k,xpos);
             gsl_matrix_set_row(&Y.matrix,k,yplaceholder);
             //gsl_vector_view fr = gsl_matrix_row(&Y.matrix,0);
-            //printf("efter:\n",k);
             //matrix_print(&Y.matrix,stdout);
             //gsl_vector_fprintf(stdout,&fr.vector,"%g");
 
@@ -254,7 +255,6 @@ int main(){
         //printf("%g %g %g\n",xi,gsl_matrix_get(&Y.matrix,0,i),sin(xi));
     }
 
-
     //3-body system
 
     double c=0., d=9.;
@@ -288,8 +288,8 @@ int main(){
     gsl_vector_set(vec0,9,dr2y);
     gsl_vector_set(vec0,10,dr3x);
     gsl_vector_set(vec0,11,dr3y);
-    double N=12;
-    double M=200;
+    int N=12;
+    int M=300;
     double ABS =0.01;
     double EPS = 0.01;
     double* Ral = malloc(sizeof(double)*(M*N));
