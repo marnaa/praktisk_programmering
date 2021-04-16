@@ -176,7 +176,7 @@ int main(){
     printf("acc= %g ; eps = %g",acc,eps);
     printf( "Int: int(4*sqrt(1-x^2),0..1)=%.16f\n", fa2);
     printf("CC-int: int(4*sqrt(1-x^2),0..1)=%.16f and error = %.16f\n",ha2,error_CC);
-    double loop_acc[]={0.0001,0.0005,0.001,0.005,0.01,0.05,};
+    double loop_acc[]={0.0001,0.0005,0.001,0.005,0.01,0.05,0.06,0.07,0.08};
     gsl_integration_workspace * w
             = gsl_integration_workspace_alloc (10000);
     gsl_integration_workspace * v
@@ -210,7 +210,7 @@ int main(){
 
         gsl_integration_qagiu(&EKSP_SQ,0,loop_acc[i],0.,10000,u,&ekspM_gsl,&ekspM_error_gsl);
         gsl_integration_qagil(&EKSP_SQ,0,loop_acc[i],0.,10000,p,&ekspP_gsl,&ekspP_error_gsl);
-        gsl_integration_qagi(&EKSP_SQ,loop_acc[i],0.,100000,v,&ekspSq_gsl,&ekspSq_error_gsl);
+        gsl_integration_qagi(&EKSP_SQ,loop_acc[i],0.,10000,v,&ekspSq_gsl,&ekspSq_error_gsl);
 
 
         double M = CC_integrater(ekspSq,0,INFINITY,loop_acc[i],0.,&ekspM_eval,&ekspM_error);
