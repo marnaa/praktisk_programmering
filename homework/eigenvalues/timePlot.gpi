@@ -4,12 +4,19 @@ set xlabel "N"
 set title "Test of time used"
 set output "timeplot.png"
 set key left
-plot "out.compare.txt" using 1:2 with lines title "Jacobi" \
-,"out.compare.txt" using 1:3 with lines title "GSL" \
-,"out.compare.txt" using 1:4 with lines title "Jacobi UT" \
-,"out.compare.txt" using 1:5 with points title "(Nj)^3" \
-,"out.compare.txt" using 1:6 with points title "(Ngsl)^3" \
-,"out.compare.txt" using 1:7 with points title "(UTn)^3" \
+ N3(x) = a*x**3
+ N3_opt(x) = b*x**3
+ N3_GSL(x) = c*x**3
+ fit N3(x) "out.compare.txt" using 1:2 via a
+ fit N3_opt(x) "out.compare.txt" using 1:3 via b
+ fit N3_GSL(x) "out.compare.txt" using 1:4 via c
+plot "out.compare.txt" using 1:2 with points title "Jacobi" \
+,N3(x)\
+,"out.compare.txt" using 1:3 with points title "GSL" \
+,N3_opt(x)\
+,"out.compare.txt" using 1:4 with points title "Jacobi Opt" \
+,N3_GSL(x) \
+
 
 
 

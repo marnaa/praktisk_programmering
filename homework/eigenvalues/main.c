@@ -85,9 +85,33 @@ void jacobi_diag_opt(gsl_matrix* A, gsl_matrix* V){
                     double new_Aqq = s * s * App + 2 * s * c * Apq + c * c * Aqq;
                     if (new_App!=App || new_Aqq!=Aqq) {
                         changed = 1;
-                        timesJ(A, p, q, theta);
-                        Jtimes(A, p, q, -theta);
-                        timesJ(V, p, q, theta);
+                        gsl_matrix_set(A,p,p,new_App);
+                        gsl_matrix_set(A,q,q,new_Aqq);
+                        gsl_matrix_set(A,p,q,0.0);
+                        for(int i =0; i<p; i++){
+                            double Aip = gsl_matrix_get(A,i,p);
+                            double Aiq = gsl_matrix_get(A,i,q);
+                            gsl_matrix_set(A,i,p,c*Aip-s*Aiq );
+                            gsl_matrix_set(A,i,q,c*Aiq+s*Aip);
+                        }
+                        for(int i =p+1; i<q; i++){
+                            double Api = gsl_matrix_get(A,p,i);
+                            double Aiq = gsl_matrix_get(A,i,q);
+                            gsl_matrix_set(A,p,i,c*Api-s*Aiq );
+                            gsl_matrix_set(A,i,q,c*Aiq+s*Api);
+                        }
+                        for(int i =q+1; i<n; i++){
+                            double Api = gsl_matrix_get(A,p,i);
+                            double Aqi = gsl_matrix_get(A,q,i);
+                            gsl_matrix_set(A,p,i,c*Api-s*Aqi);
+                            gsl_matrix_set(A,q,i,c*Aqi+s*Api);
+                        }
+                        for(int i=0; i<n; i++){
+                            double Vip=gsl_matrix_get(V,i,p);
+                            double Viq = gsl_matrix_get(V,i,q);
+                            gsl_matrix_set(V,i,p,c*Vip-s*Viq);
+                            gsl_matrix_set(V,i,q,c*Viq+s*Vip);
+                        }
                     }
             }
         }
@@ -122,8 +146,7 @@ int main(){
     matrix_print(A,test);
 
 
-    jacobi_diag_opt(A,V);
-
+    jacobi_diag(A,V);
 
     gsl_matrix_memcpy(Vcpy,V);
     fprintf(test,"D=\n");
@@ -200,7 +223,7 @@ int main(){
     gsl_vector_free(w);
     gsl_vector_free(indexvec);
 
-    //EXERCISE 3
+    //EXERCISE C
     FILE* compare = fopen("out.compare.txt","w");
     double tiktok100 = 0;
     double gsltiktok100 = 0;
@@ -212,13 +235,16 @@ int main(){
         }
         else{
             J += 5*i+5;}
-        gsl_matrix* M =gsl_matrix_alloc(J,J);
-        gsl_matrix* G =gsl_matrix_alloc(J,J);
-        gsl_matrix* Mut =gsl_matrix_alloc(J,J);
-        gsl_matrix* Gut =gsl_matrix_alloc(J,J);
-        gsl_matrix* gslM = gsl_matrix_alloc(J,J);
-        gsl_matrix* gslV = gsl_matrix_alloc(J,J);
-        gsl_vector* gslS = gsl_vector_alloc(J);
+
+        gsl_matrix* M =gsl_matrix_calloc(J,J);
+        gsl_matrix* G =gsl_matrix_calloc(J,J);
+        gsl_matrix* Mut =gsl_matrix_calloc(J,J);
+        gsl_matrix* Gut =gsl_matrix_calloc(J,J);
+        gsl_matrix* gslM = gsl_matrix_calloc(J,J);
+        gsl_matrix* gslV = gsl_matrix_calloc(J,J);
+        gsl_vector* gslS = gsl_vector_calloc(J);
+        gsl_matrix* D = gsl_matrix_calloc(J,J);
+
         for(int i = 0; i<J; i++){
         for(int j=i; j<J; j++){
             double Mij = ((double) rand()/RAND_MAX*13);
@@ -227,12 +253,14 @@ int main(){
             gsl_matrix_set(M,j,i,Mij);
         }
         }
-        matrix_print(M,infWellE);
+
+
         gsl_matrix_memcpy(gslM,M);
         gsl_matrix_memcpy(Mut,M);
         gsl_matrix_set_identity(Gut);
         gsl_matrix_set_identity(G);
         gsl_matrix_set_identity(gslV);
+
         clock_t tik, tok, gsltik, gsltok, UTtik, UTtok;
         double timeUsed, gslTimeUsed, UTTimeUsed;
         tik=clock();
@@ -240,7 +268,10 @@ int main(){
         tok=clock();
 
         UTtik=clock();
-        jacobi_diag_UT(Mut,Gut);
+        jacobi_diag_opt(Mut,Gut);
+        for(int m=0;m<J;m++ ){
+            gsl_matrix_set(D,m,m, gsl_matrix_get(Mut,m,m));
+        }
         UTtok=clock();
 
         gsltik=clock();
@@ -262,6 +293,7 @@ int main(){
             fprintf(compare, "%g %g %g %g %g %g %g\n", ((double) J), timeUsed, gslTimeUsed, UTTimeUsed, N3, gslN3,
                     UTN3);
         }
+
         gsl_matrix_free(M);
         gsl_matrix_free(G);
         gsl_matrix_free(Mut);
@@ -269,10 +301,11 @@ int main(){
         gsl_matrix_free(gslM);
         gsl_matrix_free(gslV);
         gsl_vector_free(gslS);
-        fclose(test);
-        fclose(infWellE);
-        fclose(infWell);
-        fclose(compare);
+
     }
+    fclose(test);
+    fclose(infWellE);
+    fclose(infWell);
+    fclose(compare);
     return 0;
 }
