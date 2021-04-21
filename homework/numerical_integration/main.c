@@ -41,7 +41,7 @@ double intrun(double f(double), double f2, double f3, double a, double b,
 }
 double integrater(double f(double), double a,
                   double b, double acc, double eps, int* eta,double* error){
-    double f2 = f(a+2.*(b-a)/6.), f3 = f(a+3*(b-a)/6);
+    double f2 = f(a+2.*(b-a)/6.), f3 = f(a+3.*(b-a)/6);
     int nrec = 0;
     *error = 0.;
     double val = intrun(f,f2,f3,a,b,acc,eps,nrec,eta,error);
