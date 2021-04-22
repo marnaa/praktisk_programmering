@@ -1,0 +1,24 @@
+set terminal png
+set ylabel "Error"
+set xlabel "N"
+set log y
+set title "Error of if (x^2 + y^2 < 1) return 1 else return 0 "
+set output "compareErrorPlot.png"
+set format x "%.0g"
+set format y "%.0e"
+set key top right
+ naive(x) = a*x**b
+ quasi(x) = c*x**d
+ fit naive(x) "out.compare.txt" using 1:4 via a,b
+ c=1.0
+ d=-1.0
+ fit quasi(x) "out.compare.txt" using 1:5 via c,d
+plot "out.compare.txt" using 1:4 with points title "rand err" \
+,"out.compare.txt" using 1:5 with points title "quasi err" \
+,naive(x) with lines title sprintf("rand %3.1f*n^{%3.1f}",a,b) \
+,quasi(x) with lines title sprintf("quasi %3.1f*n^{%3.1f}",c,d)\
+
+
+
+
+

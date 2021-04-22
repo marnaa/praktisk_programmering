@@ -1,0 +1,15 @@
+set terminal png
+set ylabel "Value"
+set xlabel "N"
+set title "if (x^2 + y^2 < 1) return 1 else return 0 "
+set output "compareValuePlot.png"
+set format x "%.0g"
+plot "out.compare.txt" using 1:2 with lines title "rand val" \
+,"out.compare.txt" using 1:3 with lines title "quasi val" \
+,"out.compare.txt" using 1:6 with lines title "exact"\
+
+
+
+
+
+
