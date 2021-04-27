@@ -1,0 +1,10 @@
+set terminal png
+set xlabel "r"
+set ylabel "psi0"
+set title "Psi0"
+set output "psi0Plot.png"
+plot "out.psi0.txt" using 1:2 with lines title "calc" \
+,"out.psi0.txt" using 1:3 with lines title "theo"\
+
+
+
