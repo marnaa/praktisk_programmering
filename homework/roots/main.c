@@ -85,6 +85,14 @@ void sch_eq(double x, gsl_vector* y, gsl_vector* dydx){
     double ddy = -2.*(E+1./x)*fx;
     gsl_vector_set(dydx,1,ddy);
 }
+
+void sch_eq_bound(double x, gsl_vector* y, gsl_vector* dydx){
+    gsl_vector_set(dydx,0,gsl_vector_get(y,1));
+    double fx = gsl_vector_get(y,0);
+    double ddy = -2.*(E_bound+1./x)*fx;
+    gsl_vector_set(dydx,1,ddy);
+}
+
 void ground_state(gsl_vector* eps, gsl_vector* fx){
     double a = 0.01;
     double acc = 0.001;
@@ -104,10 +112,11 @@ void ground_state_bound(gsl_vector* eps, gsl_vector* fx){
     gsl_vector* ya = gsl_vector_alloc(2);
     gsl_vector_set(ya,0,(a-a*a));
     gsl_vector_set(ya,1,(1-2.*a));
-    bby_driver(sch_eq,a,ya,R_max_bound,0.1,acc,rel_acc);
-    long double Ffoer = gsl_vector_get(ya,0);
-    long double Fefter =(R_max_bound*exp(-sqrt(-2*E_bound)*R_max_bound));
-    //printf("%g %g %g\n",Ffoer,Fefter,E_bound);
+    bby_driver(sch_eq_bound,a,ya,R_max_bound,0.1,acc,rel_acc);
+    double Ffoer = gsl_vector_get(ya,0);
+    double k = sqrt(-2.*E_bound);
+    double Fefter =R_max_bound*exp(-k*R_max_bound);
+    printf("%g %g %g\n",Ffoer,Fefter,E_bound);
     gsl_vector_set(fx,0,Ffoer-Fefter);
 }
 
@@ -155,7 +164,7 @@ int main(){
     gsl_vector_set(y,0,-3);
     for(int i = 1; i<50; i++){
         R_max = (8.)*(double)i/50.;
-        R_max_bound = (2.3)*(double)i/50.;
+        R_max_bound = (8.)*(double)i/50.;
         N_rootfinder(ground_state,y,0.001);
         N_rootfinder(ground_state_bound,y_bound,0.001);
         fprintf(conv,"%g %g \n", R_max,E+0.5);

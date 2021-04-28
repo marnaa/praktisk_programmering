@@ -2,7 +2,6 @@ set terminal png
 set xlabel "R_max"
 set ylabel "E0"
 set title "E0 convergence better boundary conditions "
-set yrange [-2:]
 set output "convBoundPlot.png"
 plot "out.convBound.txt" using 1:2 with lines title "E0+0.5" \
 
