@@ -97,6 +97,173 @@ void qnewton( double f(gsl_vector* x),
     gsl_vector_free(s);
 }
 
+/*
+ * Implementing amoeba minimization
+ * so
+ * that's it
+ */
+void hiLoCent(gsl_matrix* simplex, gsl_vector* F_val, gsl_vector* centroid, int* hi, int* lo){
+    //finding highest and lowest value
+    int n = centroid -> size;
+    *hi = 0;
+    *lo = 0;
+    double highest = gsl_vector_get(F_val,*hi);
+    double lowest = gsl_vector_get(F_val,*lo);
+    for(int i = 1; i<n+1;i++){
+        double fi = gsl_vector_get(F_val,i);
+        if(fi>highest){
+            *hi = i;
+            highest = fi;
+        }
+        else if(fi<lowest){
+            *lo = i;
+            lowest = fi;
+        }
+    }
+    //finding centroid
+    for(int i =0; i<n; i++){
+        double sum = 0;
+        for(int j =0; j<n+1;j++){
+            if(j != *hi){
+                sum+=gsl_matrix_get(simplex,i,j)/n;
+            }
+            gsl_vector_set(centroid,i,sum);
+        }
+    }
+}
+
+void init_vals(double f(gsl_vector* x), gsl_matrix* simplex, gsl_vector* F_val, gsl_vector* centroid, int* hi, int* lo){
+    int n = centroid -> size;
+    for(int i = 0; i<n+1; i++){
+        gsl_vector_view x = gsl_matrix_column(simplex,i);
+        gsl_vector_set(F_val,i,f(&x.vector));
+    }
+    hiLoCent(simplex,F_val,centroid,hi,lo);
+}
+
+double size(gsl_matrix* simplex, int lo){
+    //finding the greatest distance between the points in the simplex
+    double s=0.;
+    double distance;
+    int n = simplex -> size1;
+    gsl_vector* dist = gsl_vector_alloc(n);
+    gsl_vector_view lowest = gsl_matrix_column(simplex,lo);
+    for(int i =0; i<n+1;i++){
+        gsl_vector_view xi = gsl_matrix_column(simplex,i);
+        gsl_vector_memcpy(dist,&lowest.vector);
+        gsl_vector_sub(dist,&xi.vector);
+        distance = gsl_blas_dnrm2(dist);
+        if(distance>s){
+            s=distance;
+        }
+    }
+    gsl_vector_free(dist);
+    return s;
+}
+
+void reflect(gsl_vector* highest, gsl_vector* centroid, gsl_vector* reflected){
+    gsl_vector_memcpy(reflected,highest);
+    gsl_vector_scale(reflected,-1.);
+    gsl_blas_daxpy(2.,centroid,reflected);
+}
+void expand(gsl_vector* highest, gsl_vector* centroid, gsl_vector* expanded){
+    gsl_vector_memcpy(expanded,highest);
+    gsl_vector_scale(expanded,-2.);
+    gsl_blas_daxpy(3.,centroid,expanded);
+}
+void contract(gsl_vector* highest, gsl_vector* centroid, gsl_vector* contracted){
+    gsl_vector_memcpy(contracted,highest);
+    gsl_vector_scale(contracted,0.5);
+    gsl_blas_daxpy(0.5,centroid,contracted);
+}
+
+void reduce(gsl_matrix* simplex, int lo){
+    int n = simplex -> size1;
+    for(int i=0; i<n+1;i++){
+        if(i!=lo){
+            gsl_vector_view lowest = gsl_matrix_column(simplex,lo);
+            gsl_vector_view i_vec = gsl_matrix_column(simplex,i);
+            gsl_vector_add(&i_vec.vector,&lowest.vector);
+            gsl_vector_scale(&i_vec.vector,0.5);
+        }
+    }
+}
+
+void amoeba( double f(gsl_vector* x),
+              gsl_vector* x, gsl_vector* step, double eps){
+    int n = x->size;
+    N_MAX = 0;
+    gsl_matrix* simplex = gsl_matrix_alloc(n,n+1);
+    gsl_vector* centroid = gsl_vector_alloc(n);
+    gsl_vector* p1 = gsl_vector_alloc(n);
+    gsl_vector* p2 = gsl_vector_alloc(n);
+    gsl_vector* F_val = gsl_vector_alloc(n+1);
+    int hi, lo;
+
+    //starting point
+    for(int i = 0; i<n+1; i++){
+        gsl_matrix_set_col(simplex,i,x);
+    }
+    for(int i = 0; i<n; i++){
+        double ii = gsl_matrix_get(simplex,i,i);
+        double stepi = gsl_vector_get(step,i);
+        gsl_matrix_set(simplex,i,i, ii+stepi);
+    }
+
+    //finding high, low, centroid
+    init_vals(f,simplex,F_val,centroid,&hi,&lo);
+    while(size(simplex,lo)>eps && N_MAX<10000){
+        N_MAX++;
+        gsl_vector_view highest = gsl_matrix_column(simplex,hi);
+        hiLoCent(simplex,F_val,centroid,&hi,&lo);
+        reflect(&highest.vector,centroid, p1);
+        double f_re = f(p1);
+        if(f_re< gsl_vector_get(F_val,lo)){
+            expand(&highest.vector,centroid,p2);
+            double f_ex = f(p2);
+            if(f_ex<f_re){
+                gsl_vector_memcpy(&highest.vector,p2);
+                gsl_vector_set(F_val,hi,f_ex);
+            }
+            else{
+                gsl_vector_memcpy(&highest.vector,p1);
+                gsl_vector_set(F_val,hi,f_re);
+            }
+        }
+        else{
+            if(f_re<gsl_vector_get(F_val,hi)){
+                gsl_vector_memcpy(&highest.vector,p1);
+                gsl_vector_set(F_val,hi,f_re);
+            }
+            else {
+                contract(&highest.vector, centroid, p1);
+                double f_co = f(p1);
+                if (f_co < gsl_vector_get(F_val, hi)) {
+                    gsl_vector_memcpy(&highest.vector, p1);
+                    gsl_vector_set(F_val, hi, f_co);
+                }
+                else {
+                    reduce(simplex, lo);
+                    init_vals(f, simplex, F_val, centroid, &hi, &lo);
+                }
+            }
+        }
+    }
+    gsl_vector_view final_low = gsl_matrix_column(simplex,lo);
+    gsl_vector_memcpy(x,&final_low.vector);
+    gsl_vector_free(centroid);
+    gsl_vector_free(F_val);
+    gsl_vector_free(p1);
+    gsl_vector_free(p2);
+    gsl_matrix_free(simplex);
+}
+/*
+ *Done with amoeba
+ *
+ *
+ * Done with amoeba
+ *
+ */
 
 
 double xiAnden(gsl_vector* xs){
@@ -132,6 +299,8 @@ int main(){
     FILE* exB = fopen("out.exB.txt","w");
     //vector for norm function
     gsl_vector* x= gsl_vector_alloc(3);
+    gsl_vector* z= gsl_vector_alloc(3);
+    gsl_vector* step= gsl_vector_alloc(3);
     gsl_vector_set(x,0,3.);
     gsl_vector_set(x,1,3.);
     gsl_vector_set(x,2,3.);
@@ -141,8 +310,11 @@ int main(){
 
     //vector for himmelblau and rosenbrock
     gsl_vector* y= gsl_vector_alloc(2);
+    gsl_vector* y_step= gsl_vector_alloc(2);
     gsl_vector_set(y,0,0);
     gsl_vector_set(y,1,0);
+    gsl_vector_set(y_step,0,0.1);
+    gsl_vector_set(y_step,1,0.1);
 
     qnewton(rosenbrock,y,0.001);
     printf("rosenbrock min: (%g, %g) used steps = %i\n", gsl_vector_get(y,0), gsl_vector_get(y,1),N_MAX);
@@ -151,16 +323,60 @@ int main(){
     qnewton(himmelblau,y,0.001);
     printf("himmelblau min: (%g, %g) used steps = %i\n", gsl_vector_get(y,0), gsl_vector_get(y,1),N_MAX);
 
+    //Trying the same with amoeba
+    gsl_vector_set(y,0,0);
+    gsl_vector_set(y,1,0);
+    amoeba(rosenbrock,y,y_step,0.001);
+    printf("amoeba rosenbrock min: (%g, %g) used steps = %i\n", gsl_vector_get(y,0), gsl_vector_get(y,1),N_MAX);
+    gsl_vector_set(y,0,0);
+    gsl_vector_set(y,1,0);
+    amoeba(himmelblau,y,y_step,0.001);
+    printf("amoeba himmelblau min: (%g, %g) used steps = %i\n", gsl_vector_get(y,0), gsl_vector_get(y,1),N_MAX);
+
+    //preparing vectors for qnewton partb
     gsl_vector_set(x,0,100.);
     gsl_vector_set(x,1,10.);
     gsl_vector_set(x,2,10.);
+
+    //preparing vectors for amoeba
+    gsl_vector_set(z,0,120.);
+    gsl_vector_set(z,1,10.);
+    gsl_vector_set(z,2,10.);
+    gsl_vector_set(step,0,10);
+    gsl_vector_set(step,1,1);
+    gsl_vector_set(step,2,1);
     qnewton(deviation_BW,x,0.001);
+    amoeba(deviation_BW,z,step,0.001);
+    gsl_vector_fprintf(stdout,z,"%g");
     for(int i =0; i<30;i++){
-        fprintf(exB,"%g %g %g %g\n",E[i],sig[i],dsig[i], breitWigner(x,E[i]));
+        fprintf(exB,"%g %g %g %g %g\n",E[i],sig[i],dsig[i], breitWigner(x,E[i]), breitWigner(z,E[i]));
+    }
+    gsl_vector* reflected = gsl_vector_calloc(2);
+    gsl_vector_set(y,1,0);
+    gsl_vector_set(y,0,-1);
+    gsl_vector_set(reflected,1,0);
+    gsl_vector_set(reflected,0,1);
+    gsl_vector_set(y_step,0,0);
+    gsl_vector_set(y_step,1,2);
+
+    gsl_matrix* test = gsl_matrix_alloc(2,3);
+    gsl_matrix_set_col(test,0,y_step);
+    gsl_matrix_set_col(test,1,y);
+    gsl_matrix_set_col(test,2,reflected);
+    for(int i=0; i<2;i++){
+        double x0 = gsl_matrix_get(test,i,0);
+        double x1 = gsl_matrix_get(test,i,1);
+        double x2 = gsl_matrix_get(test,i,2);
+        printf("%g %g %g\n",x0,x1,x2);
     }
 
+
+    gsl_vector_free(reflected);
     gsl_vector_free(x);
     gsl_vector_free(y);
+    gsl_vector_free(z);
+    gsl_vector_free(step);
+    gsl_vector_free(y_step);
     fclose(exB);
 	return 0;
 }

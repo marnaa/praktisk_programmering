@@ -1,3 +1,10 @@
 min euler norm: (-7.4037e-09, -7.4037e-09, -7.44321e-09)
 rosenbrock min: (0.999959, 0.99992) used steps = 38
 himmelblau min: (3, 2) used steps = 16
+amoeba rosenbrock min: (0.1, 0) used steps = 5
+amoeba himmelblau min: (-0.146436, 0.246436) used steps = 56
+126.355
+9.62446
+10.4507
+0 -1 1
+2 0 0
