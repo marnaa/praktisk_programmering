@@ -3,7 +3,8 @@ set xlabel "E"
 set ylabel "sigma"
 set output "exBPlot.png"
 plot 'out.exB.txt' using 1:2:3 with errorbars title "Data"\
-, "out.exB.txt" using 1:4 with lines title "fit func" \
+, "out.exB.txt" using 1:4 with lines title "fit qnewton" \
+, "out.exB.txt" using 1:5 with lines title "fit amoeba" \
 
 
 

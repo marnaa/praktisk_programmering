@@ -6,6 +6,16 @@
 #include <gsl/gsl_blas.h>
 #include <assert.h>
 
+void matrix_print(gsl_matrix* A,FILE* fil){
+    for(int i=0; i<(A->size1);i++){
+        for(int j=0; j<(A->size2); j++){
+            double Aij = gsl_matrix_get(A,i,j);
+            fprintf(fil, "%0.3f  ",Aij);
+        }
+        fprintf(fil,"\n");
+    }
+}
+
 static int N_MAX;
 
 static double E[30]={101,103,105,107,109,111,113,115,117,
@@ -214,10 +224,27 @@ void amoeba( double f(gsl_vector* x),
     init_vals(f,simplex,F_val,centroid,&hi,&lo);
     while(size(simplex,lo)>eps && N_MAX<10000){
         N_MAX++;
-        gsl_vector_view highest = gsl_matrix_column(simplex,hi);
         hiLoCent(simplex,F_val,centroid,&hi,&lo);
-        reflect(&highest.vector,centroid, p1);
+        gsl_vector_view highest = gsl_matrix_column(simplex,hi);
+        /*
+        printf("N_MAX: %i \n ",N_MAX);
+
+        printf("centroid: \n ");
+        gsl_vector_fprintf(stdout,centroid,"%g");
+
+        printf("Simplex: \n ");
+        matrix_print(simplex,stdout);
+        printf("highest = %i , lowest = %i\n", hi, lo);
+        printf("Highest: \n");
+        gsl_vector_fprintf(stdout,&highest.vector,"%g");
+        */
+        reflect(&highest.vector, centroid, p1);
+
+
         double f_re = f(p1);
+        //printf("P1: \n");
+        //gsl_vector_fprintf(stdout, p1 ,"%g");
+
         if(f_re< gsl_vector_get(F_val,lo)){
             expand(&highest.vector,centroid,p2);
             double f_ex = f(p2);
@@ -235,6 +262,7 @@ void amoeba( double f(gsl_vector* x),
                 gsl_vector_memcpy(&highest.vector,p1);
                 gsl_vector_set(F_val,hi,f_re);
             }
+
             else {
                 contract(&highest.vector, centroid, p1);
                 double f_co = f(p1);
@@ -247,6 +275,7 @@ void amoeba( double f(gsl_vector* x),
                     init_vals(f, simplex, F_val, centroid, &hi, &lo);
                 }
             }
+
         }
     }
     gsl_vector_view final_low = gsl_matrix_column(simplex,lo);
@@ -301,12 +330,16 @@ int main(){
     gsl_vector* x= gsl_vector_alloc(3);
     gsl_vector* z= gsl_vector_alloc(3);
     gsl_vector* step= gsl_vector_alloc(3);
-    gsl_vector_set(x,0,3.);
-    gsl_vector_set(x,1,3.);
-    gsl_vector_set(x,2,3.);
+    gsl_vector_set(x,0,1.);
+    gsl_vector_set(x,1,1.);
+    gsl_vector_set(x,2,1.);
+    gsl_vector_set(step,0,0.1);
+    gsl_vector_set(step,1,0.1);
+    gsl_vector_set(step,2,0.1);
 
-    qnewton(xiAnden,x,0.01);
-    printf("min euler norm: (%g, %g, %g)\n", gsl_vector_get(x,0), gsl_vector_get(x,1), gsl_vector_get(x,2));
+
+    amoeba(xiAnden,x,step,0.001);
+    printf("min euler norm (amoeba): (%g, %g %g), N_MAX = %i\n", gsl_vector_get(x,0), gsl_vector_get(x,1), gsl_vector_get(x,2), N_MAX);
 
     //vector for himmelblau and rosenbrock
     gsl_vector* y= gsl_vector_alloc(2);
@@ -333,21 +366,26 @@ int main(){
     amoeba(himmelblau,y,y_step,0.001);
     printf("amoeba himmelblau min: (%g, %g) used steps = %i\n", gsl_vector_get(y,0), gsl_vector_get(y,1),N_MAX);
 
+
     //preparing vectors for qnewton partb
     gsl_vector_set(x,0,100.);
     gsl_vector_set(x,1,10.);
     gsl_vector_set(x,2,10.);
 
     //preparing vectors for amoeba
-    gsl_vector_set(z,0,120.);
+    gsl_vector_set(z,0,100.);
     gsl_vector_set(z,1,10.);
     gsl_vector_set(z,2,10.);
     gsl_vector_set(step,0,10);
     gsl_vector_set(step,1,1);
     gsl_vector_set(step,2,1);
     qnewton(deviation_BW,x,0.001);
+    printf("Higgs values qnewton:\n");
+    printf("(m,Gamma,A)=(%g,%g,%g)\n", gsl_vector_get(x,0),gsl_vector_get(x,1),gsl_vector_get(x,2));
     amoeba(deviation_BW,z,step,0.001);
-    gsl_vector_fprintf(stdout,z,"%g");
+    printf("Higgs values amoeba:\n");
+    printf("(m,Gamma,A)=(%g,%g,%g)\n", gsl_vector_get(z,0),gsl_vector_get(z,1),gsl_vector_get(z,2));
+
     for(int i =0; i<30;i++){
         fprintf(exB,"%g %g %g %g %g\n",E[i],sig[i],dsig[i], breitWigner(x,E[i]), breitWigner(z,E[i]));
     }
@@ -359,24 +397,12 @@ int main(){
     gsl_vector_set(y_step,0,0);
     gsl_vector_set(y_step,1,2);
 
-    gsl_matrix* test = gsl_matrix_alloc(2,3);
-    gsl_matrix_set_col(test,0,y_step);
-    gsl_matrix_set_col(test,1,y);
-    gsl_matrix_set_col(test,2,reflected);
-    for(int i=0; i<2;i++){
-        double x0 = gsl_matrix_get(test,i,0);
-        double x1 = gsl_matrix_get(test,i,1);
-        double x2 = gsl_matrix_get(test,i,2);
-        printf("%g %g %g\n",x0,x1,x2);
-    }
-
-
-    gsl_vector_free(reflected);
     gsl_vector_free(x);
     gsl_vector_free(y);
     gsl_vector_free(z);
     gsl_vector_free(step);
     gsl_vector_free(y_step);
     fclose(exB);
+
 	return 0;
 }
