@@ -302,7 +302,7 @@ void ann_amoeba( double cost(ann* network, gsl_vector* xs, gsl_vector* ys),
     gsl_vector_memcpy((network->params),&final_low.vector);
     //printf("params\n");
     //gsl_vector_fprintf(stdout,(network->params),"%g");
-    printf("N_MAX = %i\n",N_MAX);
+    //printf("N_MAX = %i\n",N_MAX);
     gsl_vector_free(centroid);
     gsl_vector_free(F_val);
     gsl_vector_free(p1);
@@ -327,7 +327,9 @@ void annWild_init_vals(double cost(ann* network, double diffeq_pow2(double respo
         printf("x-vector in params?:\n");
         gsl_vector_fprintf(stdout,(init->params),"%g");
         printf("cost function:\n");
-        printf("%g\n",cost(init,xs,ys));
+        printf("%g\n",cost(init, diffeq_pow2,
+                           a, b, boundary_x, boundary_y
+                ,boundary_ydot));
         */
         gsl_vector_set(F_val,i,cost(init, diffeq_pow2,
         a, b, boundary_x, boundary_y
@@ -389,20 +391,19 @@ void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double respons
     }
 
     //finding high, low, centroid
-    printf("init segmenttion?\n");
+    //printf("init segmenttion?\n");
     annWild_init_vals(cost,simplex,init, diffeq_pow2, a, b, boundary_x, boundary_y
     ,boundary_ydot, F_val,centroid,&hi,&lo);
     //printf("%g\n",size(simplex,lo));
     //matrix_print(simplex,stdout);
     //printf("%g\n",size(simplex,lo));
-    printf("while segmenttion?\n");
+    //printf("while segmenttion?\n");
     while(size(simplex,lo)>eps && N_MAX<1e6){
         N_MAX++;
         hiLoCent(simplex,F_val,centroid,&hi,&lo);
         gsl_vector_view highest = gsl_matrix_column(simplex,hi);
         /*
         printf("N_MAX: %i \n ",N_MAX);
-
         printf("centroid: \n ");
         gsl_vector_fprintf(stdout,centroid,"%g");
         printf("Fvals: \n ");
@@ -470,7 +471,7 @@ void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double respons
     gsl_vector_memcpy((network->params),&final_low.vector);
     //printf("params\n");
     //gsl_vector_fprintf(stdout,(network->params),"%g");
-    printf("N_MAX = %i\n",N_MAX);
+    //printf("N_MAX = %i\n",N_MAX);
     gsl_vector_free(centroid);
     gsl_vector_free(F_val);
     gsl_vector_free(p1);

@@ -10,7 +10,7 @@ double gaussWave_diff(double x) {
     return exp(-x * x) - 2 * x * x * exp(-x * x);
 }
 double gaussWave_diffdiff(double x){
-    return 2*exp(-x*x)*x*(2*x*x-3);
+    return 2*x*exp(-x*x)*(2*x*x-3);
 }
 
 double gaussWave_int(double x){
@@ -103,15 +103,17 @@ double ann_cost(ann* network, gsl_vector* xs, gsl_vector* ys){
 double annWild_cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                     double a, double b,double boundary_x,double boundary_y
                     ,double boundary_ydot){
-
     double abserr;
     int eta;
-    printf("pre integration");
-    double result = integrater(diffeq_pow2,a,b,1e-7,1e-7,&eta, &abserr);
+    double result = CC_integrater(diffeq_pow2,a,b,network,1e-7,1e-7,&eta, &abserr);
+    double y_err = pow(ann_response(network,boundary_x)-boundary_y,2)*(b-a);
+    double ydot_err = pow(ann_diff(network,boundary_x)-boundary_ydot,2)*(b-a);
+    double val = result+y_err+ydot_err;
+    /*
     printf("result: %g\n",result);
-
-    double val = result+pow(ann_response(network,boundary_x)-boundary_y,2)*(b-a)
-            +pow(ann_response(network,boundary_x)-boundary_ydot,2)*(b-a);
+    printf("y_err: %g\n",y_err);
+    printf("ydot_err: %g\n",ydot_err);
+    */
     return val;
 }
 
