@@ -354,16 +354,25 @@ void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double respons
     gsl_vector* init_vec = gsl_vector_alloc(n);
     ann* init = malloc(sizeof(ann));
     init->f = network->f;
+    init->f_diff = network->f_diff;
+    init->f_diffdiff = network->f_diffdiff;
+    init->f_int = network->f_int;
     init->params = init_vec;
 
     ann* ann_p1 = malloc(sizeof(ann));
     gsl_vector* p1 = gsl_vector_alloc(n);
     ann_p1->f = (network->f);
+    ann_p1->f_diff = (network->f_diff);
+    ann_p1->f_diffdiff = (network->f_diffdiff);
+    ann_p1->f_int = (network->f_int);
     ann_p1->params = p1;
 
     ann* ann_p2 = malloc(sizeof(ann));
     gsl_vector* p2 = gsl_vector_alloc(n);
     ann_p2->f = (network->f);
+    ann_p2->f_diff = (network->f_diff);
+    ann_p2->f_diffdiff = (network->f_diffdiff);
+    ann_p2->f_int = (network->f_int);
     ann_p2 -> params = p2;
 
     gsl_vector* F_val = gsl_vector_alloc(n+1);
@@ -471,8 +480,6 @@ void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double respons
     free(init);
     gsl_matrix_free(simplex);
 }
-
-
 
 
 
