@@ -20,10 +20,10 @@ ann*   ann_alloc   (int n,double(*f)(double),double(*f_diff)(double),double(*f_d
     ann* network = malloc(sizeof(ann));
     gsl_vector* params = gsl_vector_alloc(3*n);
     network->params = params;
-    network->f =gaussWave;
-    network->f_diff = gaussWave_diff;
-    network->f_diffdiff = gaussWave_diffdiff;
-    network -> f_int = gaussWave_int;
+    network->f =f;
+    network->f_diff = f_diff;
+    network->f_diffdiff = f_diffdiff;
+    network -> f_int = f_int;
     return network;
 }
 
