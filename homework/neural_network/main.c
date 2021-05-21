@@ -11,8 +11,7 @@ double gauss_diff(double x) {
     return -2 * x * exp(-x * x);
 }
 
-double diffeq_pow2(double x, void* params){
-    ann* network = (ann *) params;
+double diffeq_pow2(double x, ann* network){
     double y = ann_response(network,x);
     double ydot = ann_diff(network,x);
     double ydd = ann_diff(network,x);

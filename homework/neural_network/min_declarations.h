@@ -8,9 +8,9 @@ typedef struct {double(*f)(double); double(*f_diff)(double); double(*f_diffdiff)
 
 void ann_amoeba( double cost(ann* network, gsl_vector* xs, gsl_vector* ys),
                  ann* network, gsl_vector* xs, gsl_vector* ys, double eps);
-void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double responseofX, void* params),
+void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                                  double a, double b,double boundary_x,double boundary_y
-        ,double boundary_ydot), ann* network, double diffeq_pow2(double responseofX, void* params),
+        ,double boundary_ydot), ann* network, double diffeq_pow2(double responseofX, ann* network),
                      double a, double b,double boundary_x,double boundary_y
         ,double boundary_ydot, double eps);
 void amoeba( double f(gsl_vector* x),

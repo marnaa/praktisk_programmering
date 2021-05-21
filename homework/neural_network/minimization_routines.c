@@ -314,9 +314,9 @@ void ann_amoeba( double cost(ann* network, gsl_vector* xs, gsl_vector* ys),
 }
 
 //FOR UNSUPERVISED TRAINING
-void annWild_init_vals(double cost(ann* network, double diffeq_pow2(double responseofX, void* params),
+void annWild_init_vals(double cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                                    double a, double b,double boundary_x,double boundary_y
-        ,double boundary_ydot), gsl_matrix* simplex, ann* init, double diffeq_pow2(double responseofX, void* params),
+        ,double boundary_ydot), gsl_matrix* simplex, ann* init, double diffeq_pow2(double responseofX, ann* network),
                        double a, double b,double boundary_x,double boundary_y
         ,double boundary_ydot, gsl_vector* F_val, gsl_vector* centroid, int* hi, int* lo){
     int n = centroid -> size;
@@ -335,9 +335,9 @@ void annWild_init_vals(double cost(ann* network, double diffeq_pow2(double respo
     }
     hiLoCent(simplex,F_val,centroid,hi,lo);
 }
-void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double responseofX, void* params),
+void annWild_amoeba( double cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                                         double a, double b,double boundary_x,double boundary_y
-        ,double boundary_ydot), ann* network, double diffeq_pow2(double responseofX, void* params),
+        ,double boundary_ydot), ann* network, double diffeq_pow2(double responseofX, ann* network),
                      double a, double b,double boundary_x,double boundary_y
         ,double boundary_ydot, double eps){
     int n = (network->params)->size;

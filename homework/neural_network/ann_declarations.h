@@ -36,7 +36,7 @@ double annWild_cost(ann* network, double diffeq_pow2(double responseofX),
 double a, double b,double boundary_x,double boundary_y
 ,double boundary_ydot);
 
-void   annWild_train  (ann* network, double diffeq_pow2(double responseofX, void* params),
+void   annWild_train  (ann* network, double diffeq_pow2(double responseofX, ann* network),
                        double a, double b,double boundary_x,double boundary_y
         ,double boundary_ydot);
 #endif //NEURAL_NETWORK_ANN_DECLARATIONS_H

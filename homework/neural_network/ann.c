@@ -1,4 +1,5 @@
 #include "min_declarations.h"
+#include "integration_declarations.h"
 #include <gsl/gsl_integration.h>
 //Using gaussian wavelet as activation fuction
 double gaussWave(double x){
@@ -99,32 +100,25 @@ double ann_cost(ann* network, gsl_vector* xs, gsl_vector* ys){
     return cost/N;
 }
 
-double annWild_cost(ann* network, double diffeq_pow2(double responseofX, void* params),
+double annWild_cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                     double a, double b,double boundary_x,double boundary_y
                     ,double boundary_ydot){
-    gsl_integration_workspace * w
-            = gsl_integration_workspace_alloc (1e3);
-    double result;
+
     double abserr;
-
-    gsl_function F;
-    F.function = diffeq_pow2;
-    F.params = &network;
-
-    gsl_integration_qags(&F,a,b,1e-7,1e-7,1e3,w,&result
-                        ,&abserr);
-
+    int eta;
+    printf("pre integration");
+    double result = integrater(diffeq_pow2,a,b,1e-7,1e-7,&eta, &abserr);
+    printf("result: %g\n",result);
 
     double val = result+pow(ann_response(network,boundary_x)-boundary_y,2)*(b-a)
             +pow(ann_response(network,boundary_x)-boundary_ydot,2)*(b-a);
-    gsl_integration_workspace_free(w);
     return val;
 }
 
 void   ann_train   (ann* network,gsl_vector* xs,gsl_vector* ys){
     ann_amoeba(ann_cost,network,xs,ys,1e-7);
 }
-void   annWild_train  (ann* network, double diffeq_pow2(double responseofX, void* params),
+void   annWild_train  (ann* network, double diffeq_pow2(double responseofX, ann* network),
                        double a, double b,double boundary_x,double boundary_y
                        ,double boundary_ydot){
     annWild_amoeba(annWild_cost,network,diffeq_pow2,a, b, boundary_x, boundary_y,boundary_ydot,1e-7);

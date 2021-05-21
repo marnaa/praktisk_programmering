@@ -20,9 +20,9 @@ out.compare.txt: main
 out.diffeq.txt: main
 	./$<
 
-main: main.c ann.o minimization_routines.o
+main: main.c ann.o minimization_routines.o integrator_homemade.o
 
-ann.o: ann.c minimization_routines.o
+ann.o: ann.c minimization_routines.o integrator_homemade.o
 
 
 clean:
