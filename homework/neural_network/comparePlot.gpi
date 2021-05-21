@@ -1,0 +1,14 @@
+set terminal png
+set xlabel "x"
+set ylabel "y"
+set title "ann interpolation of exp(-x^2), sample points at integer values"
+set output "comparePlot.png"
+plot 'out.compare.txt' using 1:2 with lines title "neural"\
+, "out.compare.txt" using 1:3 with lines title "exact" \
+,'out.compare.txt' using 1:4 with lines title "neural diff"\
+, "out.compare.txt" using 1:5 with lines title "exact diff" \
+,'out.compare.txt' using 1:6 with lines title "neural int"\
+, "out.compare.txt" using 1:7 with lines title "exact int" \
+
+
+
