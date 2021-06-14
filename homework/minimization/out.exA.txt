@@ -4,6 +4,6 @@ himmelblau min: (3, 2) used steps = 16
 amoeba rosenbrock min: (0.999983, 0.999947) used steps = 58
 amoeba himmelblau min: (2.99999, 1.99947) used steps = 48
 Higgs values qnewton:
-(m,Gamma,A)=(61.4051,76.004,877.063)
+(m,Gamma,A)=(125.972,2.09224,9.90567)
 Higgs values amoeba:
-(m,Gamma,A)=(125.972,2.08625,9.87569)
+(m,Gamma,A)=(125.972,2.08632,9.87598)

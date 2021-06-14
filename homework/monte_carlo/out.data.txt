@@ -1,5 +1,5 @@
-int of norm dist 1 sigma = 0.662405 error = 0.0204281 N = 10000
-int of norm dist 2 sigma [quasi]= 0.954521 error = 0.000129384 N = 10000
+int of normal dist 1 sigma = 0.662405 error = 0.0204281 N = 10000
+int of normal dist 2 sigma [quasi]= 0.954521 error = 0.000129384 N = 10000
 Val of ex b) integral (exact val = 1.3932): 
 rand = 1.36083 (err = 0.0267461), quasi = 1.37844 (err = 0.0106229), strata = 1.35181 (err = 0.0138519) at N = 10000 
 rand = 1.41273 (err = 0.0300932), quasi = 1.36785 (err = 0.0120778), strata = 1.36128 (err = 0.0308749) at N = 20000 

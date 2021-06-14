@@ -78,9 +78,6 @@ int main(){
         gsl_vector_set((wild->params),3*i+1,bi);
         gsl_vector_set((wild->params),3*i+2,wi);
     }
-    printf("Her:\n");
-    gsl_vector_fprintf(stdout, wild->params,"%g");
-
     annWild_train(wild,diffeq_pow2,a,b,0,0,1);
 
 

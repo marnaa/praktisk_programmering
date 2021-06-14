@@ -1,6 +1,7 @@
 set terminal png
-set xlabel "x"
-set ylabel "y"
+set xlabel "t"
+set ylabel "ln(y)"
+set title "Decay of Radium" 
 set output "fitplot.png"
 plot 'out.fitdat.txt' with errorbars title "Data"\
 , "out.fitfunc.txt" using 1:2 with lines title "fit func" \

@@ -1,7 +1,7 @@
 set terminal png
 set xlabel "x"
 set ylabel "y"
-set title "ann solves harmosc"
+set title "ann solves y''=-y; y(0)=0, y'(0)=1"
 set output "difeqPlot.png"
 plot 'out.diffeq.txt' using 1:2 with lines title "neural"\
 , "out.diffeq.txt" using 1:3 with lines title "exact" \

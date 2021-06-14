@@ -198,8 +198,8 @@ int main(){
     randMC_int(dim,N,a,b,norm_dist_sig1,&norm_sig1, &err_sig1);
     //randMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2, &err_sig2);
     quasiMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2,&err_sig2);
-    printf("int of norm dist 1 sigma = %g error = %g N = %i\n",norm_sig1, err_sig1, N);
-    printf("int of norm dist 2 sigma [quasi]= %g error = %g N = %i\n",norm_sig2, err_sig2, N);
+    printf("int of normal dist 1 sigma = %g error = %g N = %i\n",norm_sig1, err_sig1, N);
+    printf("int of normal dist 2 sigma [quasi]= %g error = %g N = %i\n",norm_sig2, err_sig2, N);
     printf("Val of ex b) integral (exact val = 1.3932): \n");
     for(int i = 0;i<5;i++){
         int N_gam = 10000+10000*i;

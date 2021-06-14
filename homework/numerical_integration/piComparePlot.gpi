@@ -4,6 +4,7 @@ set ylabel "Pi-intval"
 set output "piComparePlot.png"
 set key left top
 set yrange [-0.01:]
+set title "int(4*sqrt(1-x*x),0..1) with GSL Clenshaw-Curtis and recursive"
 plot "out.piCompare.txt" using 1:2 with lines title "no CC" \
 ,"out.piCompare.txt" using 1:3 with lines title "CC"\
 ,"out.piCompare.txt" using 1:4 with lines title "gsl"\

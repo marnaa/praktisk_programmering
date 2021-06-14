@@ -1,0 +1,1 @@
+Evaluations of the c part is 832 for the interval [0,INF]; [-INF,0]; [-INF,INF]

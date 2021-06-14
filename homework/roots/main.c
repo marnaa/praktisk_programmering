@@ -116,7 +116,6 @@ void ground_state_bound(gsl_vector* eps, gsl_vector* fx){
     double Ffoer = gsl_vector_get(ya,0);
     double k = sqrt(-2.*E_bound);
     double Fefter =R_max_bound*exp(-k*R_max_bound);
-    printf("%g %g %g\n",Ffoer,Fefter,E_bound);
     gsl_vector_set(fx,0,Ffoer-Fefter);
 }
 

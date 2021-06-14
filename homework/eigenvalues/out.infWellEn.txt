@@ -1,4 +1,4 @@
-Energies:
+Energies (state, calc, exact):
 0 9.85121 9.8696
 1 39.1848 39.4784
 2 87.3455 88.8264

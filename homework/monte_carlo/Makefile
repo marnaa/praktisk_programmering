@@ -9,6 +9,7 @@ all: out.data.txt  compareErrorPlot.png compareValuePlot.png
 
 compareErrorPlot.png: compareErrorPlot.gpi out.compare.txt
 	gnuplot $<
+
 compareValuePlot.png: compareValuePlot.gpi out.compare.txt
 	gnuplot $<
 out.data.txt: main

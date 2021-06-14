@@ -200,7 +200,7 @@ int main(){
         gsl_vector_set(indexvec,i, i);
     }
     gsl_sort_vector2(w,indexvec);
-    fprintf(infWellE,"Energies:\n");
+    fprintf(infWellE,"Energies (state, calc, exact):\n");
     for (int k=0; k < n/3; k++){
         double exact = M_PI*M_PI*(k+1)*(k+1);
         double calculated = gsl_vector_get(w,k);

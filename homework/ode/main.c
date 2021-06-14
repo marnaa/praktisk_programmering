@@ -147,6 +147,22 @@ void SIR3(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,1,didt);
     gsl_vector_set(dydx,2,drdt);
 }
+
+void SIR4(double x, gsl_vector* y, gsl_vector* dydx){
+    double N = 5.5e6;
+    double contact = 4. ;
+    double Tr = 9.; //days
+    double Tc = Tr/contact;
+    double s = gsl_vector_get(y,0);
+    double i = gsl_vector_get(y,1);
+    double dsdt = -i*s/(N*Tc);
+    assert(dsdt<0);
+    double didt = i*s/(N*Tc)-i/Tr;
+    double drdt = i/Tr;
+    gsl_vector_set(dydx,0,dsdt);
+    gsl_vector_set(dydx,1,didt);
+    gsl_vector_set(dydx,2,drdt);
+}
 void threebody( double x, gsl_vector* y, gsl_vector* dydx){
     double G = 1.;
     double m1 = 1.;
@@ -196,6 +212,7 @@ int main(){
     FILE* harmOsc = fopen("out.harmosc.txt","w");
     FILE* disease = fopen("out.disease.txt","w");
     FILE* disease3 = fopen("out.disease3.txt","w");
+    FILE* disease4 = fopen("out.disease4.txt","w");
     FILE* body3 = fopen("out.3body.txt","w");
     double eps = 0.005;
     double abs = 0.005;
@@ -212,7 +229,7 @@ int main(){
 
 
     //Disease part
-    int dk, dk3;
+    int dk, dk3, dk4;
     double da=0., db=100.;
     gsl_vector* dya = gsl_vector_calloc(3);
     double I = 661., hadDisease=234318.;
@@ -226,12 +243,17 @@ int main(){
     double* Tal = malloc(sizeof(double)*(dm));
     double* Dal3 = malloc(sizeof(double)*(dm*dn));
     double* Tal3 = malloc(sizeof(double)*(dm));
+    double* Dal4 = malloc(sizeof(double)*(dm*dn));
+    double* Tal4 = malloc(sizeof(double)*(dm));
     dk = bby_driver(SIR,da,dya,&Dal,dm,&Tal,db,(db-da)/dm,abs,eps);
     dk3 = bby_driver(SIR3,da,dya,&Dal3,dm,&Tal3,db,(db-da)/dm,abs,eps);
+    dk4 = bby_driver(SIR4,da,dya,&Dal4,dm,&Tal4,db,(db-da)/dm,abs,eps);
     gsl_matrix_view D = gsl_matrix_view_array(Dal,dk,dn);
     gsl_vector_view T = gsl_vector_view_array(Tal, dk);
     gsl_matrix_view D3 = gsl_matrix_view_array(Dal3,dk3,dn);
     gsl_vector_view T3 = gsl_vector_view_array(Tal3, dk3);
+    gsl_matrix_view D4 = gsl_matrix_view_array(Dal4,dk4,dn);
+    gsl_vector_view T4 = gsl_vector_view_array(Tal4, dk4);
     //printf("%i",dk);
     //printf("her");
     //gsl_vector_fprintf(stdout, dya,"%g");
@@ -247,6 +269,12 @@ int main(){
         double ti3 = gsl_vector_get(&T3.vector,i);
         fprintf(disease3,"%g %g %g %g\n",ti3,gsl_matrix_get(&D3.matrix,i,0),gsl_matrix_get(&D3.matrix,i,1),gsl_matrix_get(&D3.matrix,i,2));
         //printf("%g %g %g %g \n",ti,gsl_matrix_get(&D.matrix,i,0),gsl_matrix_get(&D.matrix,i,1),gsl_matrix_get(&D.matrix,i,2));
+    }
+
+    for(int i =0; i<dk4;i++){
+        double ti4 = gsl_vector_get(&T4.vector,i);
+   fprintf(disease4,"%g %g %g %g\n",ti4,gsl_matrix_get(&D4.matrix,i,0),gsl_matrix_get(&D4.matrix,i,1),gsl_matrix_get(&D4.matrix,i,2));
+        //printf("%g %g %g %g \n",ti,gsl_matrix_get(&D.matrix,i,0),gsl_matrix_get(&D.matrix,i,1),gsl_matrix_get(&D.matrix,i,2));     
     }
 
     for(int i =0; i<k;i++){
@@ -314,12 +342,15 @@ int main(){
     free(Dal);
     free(Tal3);
     free(Dal3);
+    free(Dal4);
+    free(Tal4);
     gsl_vector_free(ya);
     gsl_vector_free(dya);
     gsl_vector_free(vecplace);
     gsl_vector_free(err);
     fclose(disease);
     fclose(disease3);
+    fclose(disease4);
     fclose(harmOsc);
     fclose(body3);
 	return 0;
