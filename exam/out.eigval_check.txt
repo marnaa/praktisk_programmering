@@ -1,0 +1,98 @@
+CHECKING HOW WELL THE EIGENVALUES OF T APPROXIMATES THE HIGHEST EIGENVALUE(S) OF A
+WITH DIFFERENT SIZES OF KYRLOV BASES 
+
+The eigenvalue at a subspace of 1:
+Eigenvalues (T, A):
+1 -0.778569 54.4375
+ 
+ 
+The eigenvalue at a subspace of 2:
+Eigenvalues (T, A):
+1 9.07011 54.4375
+2 -8.66647 15.4875
+ 
+ 
+The eigenvalue at a subspace of 3:
+Eigenvalues (T, A):
+1 51.8981 54.4375
+2 9.48396 15.4875
+3 -7.51522 9.89395
+ 
+ 
+The eigenvalue at a subspace of 4:
+Eigenvalues (T, A):
+1 54.4374 54.4375
+2 9.55241 15.4875
+3 -5.29734 9.89395
+4 -11.1547 8.86114
+ 
+ 
+The eigenvalue at a subspace of 5:
+Eigenvalues (T, A):
+1 54.1202 54.4375
+2 11.1259 15.4875
+3 8.95284 9.89395
+4 -3.8753 8.86114
+5 -8.77888 -0.814937
+ 
+ 
+The eigenvalue at a subspace of 6:
+Eigenvalues (T, A):
+1 54.4375 54.4375
+2 15.4867 15.4875
+3 9.78144 9.89395
+4 -1.99801 8.86114
+5 -5.47493 -0.814937
+6 -11.1689 -2.9824
+ 
+ 
+The eigenvalue at a subspace of 7:
+Eigenvalues (T, A):
+1 54.429 54.4375
+2 13.6056 15.4875
+3 9.14596 9.89395
+4 -0.699039 8.86114
+5 -3.51272 -0.814937
+6 -8.10097 -2.9824
+7 -8.84799 -3.67195
+ 
+ 
+The eigenvalue at a subspace of 8:
+Eigenvalues (T, A):
+1 54.4375 54.4375
+2 15.4875 15.4875
+3 9.88884 9.89395
+4 8.84457 8.86114
+5 -1.28809 -0.814937
+6 -5.01801 -2.9824
+7 -8.1174 -3.67195
+8 -11.1708 -5.5308
+ 
+ 
+The eigenvalue at a subspace of 9:
+Eigenvalues (T, A):
+1 54.4375 54.4375
+2 15.3242 15.4875
+3 9.5899 9.89395
+4 8.63008 8.86114
+5 -0.846061 -0.814937
+6 -3.35485 -2.9824
+7 -5.43794 -3.67195
+8 -8.68419 -5.5308
+9 -10.9468 -8.68987
+ 
+ 
+The eigenvalue at a subspace of 10:
+Eigenvalues (T, A):
+1 54.4375 54.4375
+2 15.4875 15.4875
+3 9.89395 9.89395
+4 8.86114 8.86114
+5 -0.814937 -0.814937
+6 -2.9824 -2.9824
+7 -3.67195 -3.67195
+8 -5.5308 -5.5308
+9 -8.68987 -8.68987
+10 -11.1712 -11.1712
+ 
+ 
