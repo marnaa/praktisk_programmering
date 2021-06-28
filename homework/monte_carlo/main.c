@@ -202,7 +202,7 @@ int main(){
     randMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig1, &err_sig1);
     //randMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2, &err_sig2);
     quasiMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2,&err_sig2);
-    norm_sig2_str = res_gam_str = strata(dim,N,a,b,norm_dist_sig2,&err_gam_str,0.005,0.01,0,0);
+    norm_sig2_str  = strata(dim,N,a,b,norm_dist_sig2,&err_gam_str,0.005,0.01,0,0);
     printf("int of normal dist, 2 sigma [rand] = %g error = %g N = %i\n",norm_sig1, err_sig1, N);
     printf("int of normal dist, 2 sigma [quasi]= %g error = %g N = %i\n",norm_sig2, err_sig2, N);
     printf("int of normal dist, 2 sigma [strata]= %g error = %g N = %i\n",norm_sig2_str, sqrt(err_sig2_str), N);
