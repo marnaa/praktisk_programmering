@@ -74,8 +74,8 @@ int main(){
     fprintf(cks,"Covariance Matix:\n");
     matrix_print(cov,cks);
     fprintf(cks,"Params and Halflife:\n");
-    fprintf(cks,"c0 = (%g +/- %g) \nc1 (lambda) = (%g +/- %g)\ncalc T_(1/2) = (%g +/- %g) days\nreal T_(1/2) = %g days\n", c0,sigma_c0,c1,sigma_c1 log(2)/(-c1)
-    ,sigma_c1, 3.63);
+    fprintf(cks,"c0 = (%g +/- %g) \nc1 (lambda) = (%g +/- %g)\ncalc T_(1/2) = (%g +/- %g) days\nreal T_(1/2) = %g days\n"
+    ,c0,sigma_c0,c1,sigma_c1, log(2)/(-c1),sigma_c1, 3.63);
 
     for(int i=0; i<xydy->size1;i++){
         double xi, yi, dyi;
