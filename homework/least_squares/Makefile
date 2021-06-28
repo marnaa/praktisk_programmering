@@ -17,3 +17,5 @@ main: main.c gs_routines.o
 
 clean:
 	$(RM) *.o main *.png out.*
+
+

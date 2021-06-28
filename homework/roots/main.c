@@ -141,7 +141,7 @@ int main(){
     R_max_bound = 0.5;
     N_rootfinder(ground_state,y,0.001);
     N_rootfinder(ground_state_bound,y_bound,0.001);
-    printf("Lowest energy: b) E0 = %g  c) E0 = %g\n",E, E_bound);
+    printf("Lowest energy: b boundary) E0 = %g  c boundary) E0 = %g\n",E, E_bound);
 
     //Finding the ground state by solving the schrödinger equation using the optimized ode driver
     double eps = 0.001;
@@ -156,13 +156,14 @@ int main(){
     adult_driver(sch_eq,a,ya,&Yal,m,&Xal,b,(b-a)/10,abs,eps);
     gsl_matrix_view Y = gsl_matrix_view_array(Yal, m, n);
     gsl_vector_view X = gsl_vector_view_array(Xal, m);
-    for(int i = 0; i<m; i++){
-        double xi = gsl_vector_get(&X.vector,i);
-        if(xi!=0){
-            double th_exp = xi*exp(-xi);
-            double calc = gsl_matrix_get(&Y.matrix,i,0);
-            fprintf(psi0,"%g %g %g\n",xi, calc, th_exp);
+    for(int i = 0; i<m; i++) {
+        double xi = gsl_vector_get(&X.vector, i);
+        if (xi != 0) {
+            double th_exp = xi * exp(-xi);
+            double calc = gsl_matrix_get(&Y.matrix, i, 0);
+            fprintf(psi0, "%g %g %g\n", xi, calc, th_exp);
         }
+    }
 
     //Investigating convergence by using different R_max both for both boundary conditions
     gsl_vector_set(y_bound,0,-1);

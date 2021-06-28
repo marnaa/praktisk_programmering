@@ -4,16 +4,7 @@
 #include <gsl/gsl_integration.h>
 
 
-//TO DO:
-/* double integrate(double f(double), double a, double b, double δ, double ε)
-{
-double Q = higher_order_rule, q = lower_order_rule, err=|Q-q|;
-if (err < δ+ε|Q|) return Q;
-else return integrate(f,a,(a+b)/2,δ/√2,ε)+
-            integrate(f,(a+b)/2,b,δ/√2,ε);
-}
- But open
- */
+
 //Open integrater using polynomials
 double intrun(double f(double), double f2, double f3, double a, double b,
               double acc, double eps,double nrec, int *eta, double* error){
@@ -191,11 +182,11 @@ int main(){
 
 
     printf("No var change: int(sqrt(x),0..1)= %.16f\n",fa1);
-    printf("var change: int(sqrt(x),0..1)= %.16f ",ha1);
-    printf("var change: int(1/sqrt(x),0..1)= %.16f int(ln(x)/sqrt(x),0..1)=%.16f\n",hb1,hb2);
-    printf("acc= %g ; eps = %g",acc,eps);
-    printf( "Int: int(4*sqrt(1-x^2),0..1)=%.16f\n", fa2);
-    printf("CC-int: int(4*sqrt(1-x^2),0..1)=%.16f and error = %.16f\n",ha2,error_CC);
+    printf("var change: int(sqrt(x),0..1)= %.16f \n",ha1);
+    printf("var change: int(1/sqrt(x),0..1)= %.16f \n and int(ln(x)/sqrt(x),0..1)=%.16f\n",hb1,hb2);
+    printf("AT acc= %g ; eps = %g TRYING THE TWO DIFFERENT ROUTINES\n",acc,eps);
+    printf( "No var: int(4*sqrt(1-x^2),0..1)=%.16f\n", fa2);
+    printf("Var change: int(4*sqrt(1-x^2),0..1)=%.16f and error = %.16f\n",ha2,error_CC);
 
     //Testing against gsl_integrator etc.
     double loop_acc[]={0.0001,0.0005,0.001,0.005,0.01,0.05,0.06,0.07,0.08};
@@ -219,7 +210,8 @@ int main(){
     gsl_function F,EKSP_SQ;
     F.function = &Fa2;
     EKSP_SQ.function = &ekspSq;
-    for( int i =0; i<6; i++){
+    printf("\n\nERROR BELONGING TO int(4*sqrt(1-x*x),0..1) FOR THE PICOMPARE.PNG\n\n");
+    for( int i =0; i<4; i++){
         eta=0;
         eta_CC=0;
         gsl_integration_qags (&F, 0, 1, loop_acc[i], 0, 10000,
@@ -229,7 +221,8 @@ int main(){
         double CC_compare = fabs(M_PI-CC_integrater(Fa2,a,b,loop_acc[i],0.,&eta_CC,&err_CC));
         fprintf(pi_compare,"%g %g %g %g %i %i\n",loop_acc[i],compare,
                 CC_compare,fabs(M_PI-result),eta, eta_CC);
-        printf("Error for compare: _CC= %g _normal = %g  _gsl= %g\n",err_CC,err, err_gsl);
+
+        printf("Error at acc %g: _CC= %g _normal = %g  _gsl= %g\n",loop_acc[i],err_CC,err, err_gsl);
 
 
         gsl_integration_qagiu(&EKSP_SQ,0,loop_acc[i],0.,10000,u,&ekspM_gsl,&ekspM_error_gsl);

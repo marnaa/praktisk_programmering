@@ -1,2 +1,2 @@
 The extremum of Rosen is at (x= 1,y=1) 
-Lowest energy: E0 = -0.499978 -0.501742
+Lowest energy: b boundary) E0 = -0.499978  c boundary) E0 = -0.501742

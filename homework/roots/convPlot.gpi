@@ -3,6 +3,7 @@ set xlabel "R_{max}"
 set ylabel "E"
 set title "E0 convergence "
 set yrange [-2:]
+set xrange [1:]
 set output "convPlot.png"
 plot "out.conv.txt" using 1:2 with lines title "E0 + 0.5" \
 

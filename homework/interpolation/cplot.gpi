@@ -1,6 +1,7 @@
 set terminal png
 set xlabel "x"
 set ylabel "y"
+set yrange [-1:2.5]
 set title "interpolation of sin(x), int and diff, cubic"
 set output "cubic_plot.png"
 plot "out.cdata.txt" using 1:2 with points title "interp val" \

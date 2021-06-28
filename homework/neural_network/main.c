@@ -31,7 +31,7 @@ int main(){
         gsl_vector_set(xs,i+10,xi);
         gsl_vector_set(ys,i+10,yi);
     }
-    ann* interp = ann_alloc(3,gaussWave, gaussWave_diff,gaussWave_diffdiff, gaussWave_int);
+    ann* interp = ann_alloc(4,gaussWave, gaussWave_diff,gaussWave_diffdiff, gaussWave_int);
     ann* wild = ann_alloc(4,gaussWave, gaussWave_diff,gaussWave_diffdiff, gaussWave_int);
 
 
@@ -41,11 +41,11 @@ int main(){
     int n_neuron_interp = ((interp->params)->size)/3;
 
     for(int i=0; i<n_neuron_interp;i++){
-        double ai = -5+(b_interp-a_interp)*(i)/(n_neuron_interp-1);
+        double ai = a_interp+(b_interp-a_interp)*(i)/(n_neuron_interp);
         double bi = 1;
         double wi = 1;
 
-        gsl_vector_set((interp->params),3*i,1);
+        gsl_vector_set((interp->params),3*i,ai);
         gsl_vector_set((interp->params),3*i+1,bi);
         gsl_vector_set((interp->params),3*i+2,wi);
     }

@@ -1,6 +1,7 @@
 set terminal png
 set xlabel "x"
 set ylabel "y"
+set yrange [-1: 1.5]
 set title "interpolation of sin(x), int and diff, quad"
 set output "quadratic_plot.png"
 plot "out.qdata.txt" using 1:2 with points title "interp val" \

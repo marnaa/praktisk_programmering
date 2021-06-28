@@ -169,6 +169,7 @@ int main(){
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,calc1,A,-1.,Acpy);
     fprintf(test, " Anything happened? = D - A = 0?: \n");
     matrix_print(Acpy,test);
+
     gsl_matrix_free(A);
     gsl_matrix_free(Acpy);
     gsl_matrix_free(V);
@@ -281,6 +282,9 @@ int main(){
         timeUsed = ((double) (tok - tik)) / CLOCKS_PER_SEC;
         gslTimeUsed = ((double) (gsltok - gsltik)) / CLOCKS_PER_SEC;
         UTTimeUsed = ((double) (UTtok - UTtik)) / CLOCKS_PER_SEC;
+        //Tried to find a standard time I could multiply up, but that wasn't nice so this part
+        //is not really used. But I'm not sure to what extend it reaches in the rest of the project,
+        //and since it doesn't do harm I haven't removed it.
         if(i==-1){
             tiktok100+=timeUsed;
             gsltiktok100+=gslTimeUsed;

@@ -4,7 +4,9 @@ It, however, need to be modified to include a cost function, which is done in mi
 It also draws upon the numerical integration previously developed, which is found in
 integrator_homemade.c.
 In comparePlot.png we train the network to exp(-x^2), and show the 
-routine's ability to do find the integral and differential of the function.
+routine's ability to do find the integral and differential of the function. At least to some 
+extend, I think it has some trouble because the training function x*exp(-x^2) and exp(-x^2)
+are orthogonal, but the approximation isn't bad at all when it matters. 
 
 In diffepPlot.png we solve the differential equation y''=-y through the neural network,
 which is the requirement of c). This add's the requirement of the second derivative to the

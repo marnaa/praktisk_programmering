@@ -70,8 +70,9 @@ void randMC_int(int dim, int N, double a[],double b[],
     *result = mean_f*V;
 }
 
+
 double strata(int dim, int N, double a[],double b[],
-             double f(int dim,double x[]), double* error,
+             double f(int dim,double x[]), double* var,
              double acc, double eps,int n_reuse, double mean_reuse) {
     double V = 1, mean = 0;
     double maxvar;
@@ -122,7 +123,7 @@ double strata(int dim, int N, double a[],double b[],
     double err = fabs(mean_reuse-mean)*V;
     double tol = acc+fabs(integ)*eps;
     if(err<tol){
-        *error += err*err;
+        *var += err*err;
         return integ;
     }
     double a2[dim], b2[dim];
@@ -133,8 +134,8 @@ double strata(int dim, int N, double a[],double b[],
     a2[idiv] = (a[idiv]+b[idiv])/2;
     b2[idiv] = (a[idiv]+b[idiv])/2;
     double integ_left =
-            strata(dim,N,a,b2,f,error,acc/sqrt(2),eps,n_left[idiv],mean_left[idiv]);
-    double integ_right = strata(dim,N,a2,b,f,error,acc/sqrt(2),eps,n_right[idiv],mean_right[idiv]);
+            strata(dim,N,a,b2,f,var,acc/sqrt(2),eps,n_left[idiv],mean_left[idiv]);
+    double integ_right = strata(dim,N,a2,b,f,var,acc/sqrt(2),eps,n_right[idiv],mean_right[idiv]);
     return integ_left+integ_right;
 }
 
