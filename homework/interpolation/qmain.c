@@ -86,6 +86,7 @@ double qeval(qspline* s, double z) {
     return val;
 }
 
+//FUNCTION FOR EVALUATING THE INTEGRAL SPLINE IN A GIVEN Z
 double qint(qspline* s, double z){
     int j = binsearch(s->x,z);
     double intval = 0;
@@ -110,6 +111,8 @@ double qint(qspline* s, double z){
     return intval;
 }
 
+//finding the value of the derivative of the interpolated function in z, done by differentiating
+//the qspline formula
 double qdiff(qspline* s, double z){
     int j = binsearch(s->x,z);
     double bj = gsl_vector_get(s->b,j);

@@ -51,6 +51,9 @@ void rkstep12(void f(double x, gsl_vector* y, gsl_vector* dydx)
     gsl_vector_free(k1);
     gsl_vector_free(yt);
 }
+//Driver for the ODE, remembers path by pre-assigned matrix. Tried with reallocation
+//but gave segmentation errors
+// they call it the baby driver
 
 int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         ,double a, gsl_vector* ya, double **Yal,
@@ -84,6 +87,9 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
             if(k>=steps){
                 return -k; //Too few steps;
                 printf("Her %i\n",k);
+
+                // Here was some relocation but crashes don't know why :(
+
                 Yal = realloc(*Yal, sizeof(double)*(n*(k+1)));
                 Xal = realloc(*Xal, sizeof(double)*(k+1));
                 Y = gsl_matrix_view_array(*Yal, k+1, n);
@@ -109,7 +115,7 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
     return k+1;
     }
 
-
+// classical harmonic ocillator
 void harmosc(double x, gsl_vector* y, gsl_vector* dydx){
     double yi = gsl_vector_get(y,0);
     double dy = gsl_vector_get(y,1);
@@ -132,6 +138,7 @@ void SIR(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,2,drdt);
 }
 
+//SIR with contact number 3
 void SIR3(double x, gsl_vector* y, gsl_vector* dydx){
     double N = 5.5e6;
     double contact = 3. ;
@@ -147,7 +154,7 @@ void SIR3(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,1,didt);
     gsl_vector_set(dydx,2,drdt);
 }
-
+//SIR with contact number 4
 void SIR4(double x, gsl_vector* y, gsl_vector* dydx){
     double N = 5.5e6;
     double contact = 4. ;
@@ -163,6 +170,9 @@ void SIR4(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,1,didt);
     gsl_vector_set(dydx,2,drdt);
 }
+
+//Three body system differential equation
+// would have been better with complex numbers but chose a large vector instead
 void threebody( double x, gsl_vector* y, gsl_vector* dydx){
     double G = 1.;
     double m1 = 1.;
@@ -223,6 +233,7 @@ int main(){
     int n=2, m=100;
     double* Yal = malloc(sizeof(double)*(m*n));
     double* Xal = malloc(sizeof(double)*(m));
+    //Does the routine work with classical harmonic oscillator y''=-y
     k = bby_driver(harmosc,a,ya,&Yal,m,&Xal,b,(b-a)/30,abs,eps);
     gsl_matrix_view Y = gsl_matrix_view_array(Yal, k, n);
     gsl_vector_view X = gsl_vector_view_array(Xal, k);
@@ -232,6 +243,8 @@ int main(){
     int dk, dk3, dk4;
     double da=0., db=100.;
     gsl_vector* dya = gsl_vector_calloc(3);
+
+    //Defining parameters for the pandemic
     double I = 661., hadDisease=234318.;
     double vaccinated = 409.187, R=hadDisease+vaccinated;
     double S = 5.5e6-I-R;
@@ -239,15 +252,21 @@ int main(){
     gsl_vector_set(dya,1,I);
     gsl_vector_set(dya,2,R);
     int dn=3, dm=300;
+
+    //Defining some matrices for the disease ode's
     double* Dal = malloc(sizeof(double)*(dm*dn));
     double* Tal = malloc(sizeof(double)*(dm));
     double* Dal3 = malloc(sizeof(double)*(dm*dn));
     double* Tal3 = malloc(sizeof(double)*(dm));
     double* Dal4 = malloc(sizeof(double)*(dm*dn));
     double* Tal4 = malloc(sizeof(double)*(dm));
+
+    //Solving the differential equations with the driver for the pandemic
     dk = bby_driver(SIR,da,dya,&Dal,dm,&Tal,db,(db-da)/dm,abs,eps);
     dk3 = bby_driver(SIR3,da,dya,&Dal3,dm,&Tal3,db,(db-da)/dm,abs,eps);
     dk4 = bby_driver(SIR4,da,dya,&Dal4,dm,&Tal4,db,(db-da)/dm,abs,eps);
+
+
     gsl_matrix_view D = gsl_matrix_view_array(Dal,dk,dn);
     gsl_vector_view T = gsl_vector_view_array(Tal, dk);
     gsl_matrix_view D3 = gsl_matrix_view_array(Dal3,dk3,dn);

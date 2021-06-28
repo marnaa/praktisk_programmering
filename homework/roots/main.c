@@ -93,6 +93,7 @@ void sch_eq_bound(double x, gsl_vector* y, gsl_vector* dydx){
     gsl_vector_set(dydx,1,ddy);
 }
 
+//Finding the roots of the schrödinger eq
 void ground_state(gsl_vector* eps, gsl_vector* fx){
     double a = 0.01;
     double acc = 0.001;
@@ -104,6 +105,8 @@ void ground_state(gsl_vector* eps, gsl_vector* fx){
     bby_driver(sch_eq,a,ya,R_max,0.1,acc,rel_acc);
     gsl_vector_set(fx,0,gsl_vector_get(ya,0));
 }
+
+//Finding the roots of the schrödinger eq but with the better bpoundary conditions of c)
 void ground_state_bound(gsl_vector* eps, gsl_vector* fx){
     double a = 0.01;
     double acc = 0.001;
@@ -133,11 +136,14 @@ int main(){
     N_rootfinder(Rosen_diff,x,1e-4);
     printf("The extremum of Rosen is at (x= %g,y=%g) \n", gsl_vector_get(x,0),gsl_vector_get(x,1));
 
+    //b) and c) Finding the ground state for hydrogen
     R_max = 8.;
     R_max_bound = 0.5;
     N_rootfinder(ground_state,y,0.001);
     N_rootfinder(ground_state_bound,y_bound,0.001);
-    printf("Lowest energy: E0 = %g %g\n",E, E_bound);
+    printf("Lowest energy: b) E0 = %g  c) E0 = %g\n",E, E_bound);
+
+    //Finding the ground state by solving the schrödinger equation using the optimized ode driver
     double eps = 0.001;
     double abs = 0.001;
     double a=0.01, b=8.;
@@ -157,8 +163,8 @@ int main(){
             double calc = gsl_matrix_get(&Y.matrix,i,0);
             fprintf(psi0,"%g %g %g\n",xi, calc, th_exp);
         }
-    }
 
+    //Investigating convergence by using different R_max both for both boundary conditions
     gsl_vector_set(y_bound,0,-1);
     gsl_vector_set(y,0,-3);
     for(int i = 1; i<50; i++){

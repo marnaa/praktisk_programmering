@@ -73,6 +73,9 @@ int bby_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
     }
     return k;
 }
+
+// Same as bby-driver but now with the added feature of being able to store the differentials of the ODE and not
+//just the result
 int adult_driver(void f(double x, gsl_vector* y, gsl_vector* dydx)
         ,double a, gsl_vector* ya, double **Yal,
                int steps, double **Xal, double b, double h,

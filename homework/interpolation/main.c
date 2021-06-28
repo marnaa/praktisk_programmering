@@ -18,6 +18,7 @@ int binsearch(gsl_vector* x, double z){
 	return i;
 	}
 
+//Linear spline functions (interpolation, integration=
 double linterp(gsl_vector* x, gsl_vector* y, double z){
 	int i = binsearch(x, z);
 	double a = (gsl_vector_get(y,i+1)-gsl_vector_get(y,i))/
@@ -25,6 +26,8 @@ double linterp(gsl_vector* x, gsl_vector* y, double z){
 	double fz = a*(z-gsl_vector_get(x,i))+gsl_vector_get(y,i);
 	return fz;
 	}
+
+
 double linterp_integ(gsl_vector* x, gsl_vector* y, double z){
 	int i = binsearch(x, z);
 	double intfz = 0.;

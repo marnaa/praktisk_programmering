@@ -45,6 +45,8 @@ void gradient(double f(gsl_vector* x),gsl_vector* x, gsl_vector* gradient,
         gsl_vector_memcpy(Dx,x);
     }
 }
+
+//Implementation of quasi-newton method
 void qnewton( double f(gsl_vector* x),
               gsl_vector* x, double eps){
     int n = x->size;
@@ -112,6 +114,8 @@ void qnewton( double f(gsl_vector* x),
  * so
  * that's it
  */
+
+//Func for finding the highest value, lowest and the center
 void hiLoCent(gsl_matrix* simplex, gsl_vector* F_val, gsl_vector* centroid, int* hi, int* lo){
     //finding highest and lowest value
     int n = centroid -> size;
@@ -142,6 +146,8 @@ void hiLoCent(gsl_matrix* simplex, gsl_vector* F_val, gsl_vector* centroid, int*
     }
 }
 
+
+//Func for founding the initial values for the amoeba
 void init_vals(double f(gsl_vector* x), gsl_matrix* simplex, gsl_vector* F_val, gsl_vector* centroid, int* hi, int* lo){
     int n = centroid -> size;
     for(int i = 0; i<n+1; i++){
@@ -150,6 +156,7 @@ void init_vals(double f(gsl_vector* x), gsl_matrix* simplex, gsl_vector* F_val, 
     }
     hiLoCent(simplex,F_val,centroid,hi,lo);
 }
+
 
 double size(gsl_matrix* simplex, int lo){
     //finding the greatest distance between the points in the simplex
@@ -171,22 +178,29 @@ double size(gsl_matrix* simplex, int lo){
     return s;
 }
 
+//Function for reflection around the centroid
 void reflect(gsl_vector* highest, gsl_vector* centroid, gsl_vector* reflected){
     gsl_vector_memcpy(reflected,highest);
     gsl_vector_scale(reflected,-1.);
     gsl_blas_daxpy(2.,centroid,reflected);
 }
+
+//Function for expanding the amoeba
 void expand(gsl_vector* highest, gsl_vector* centroid, gsl_vector* expanded){
     gsl_vector_memcpy(expanded,highest);
     gsl_vector_scale(expanded,-2.);
     gsl_blas_daxpy(3.,centroid,expanded);
 }
+
+//Function for contracting the highest point closer to the centroid
 void contract(gsl_vector* highest, gsl_vector* centroid, gsl_vector* contracted){
     gsl_vector_memcpy(contracted,highest);
     gsl_vector_scale(contracted,0.5);
     gsl_blas_daxpy(0.5,centroid,contracted);
 }
 
+
+//Reducing the amoeba in size
 void reduce(gsl_matrix* simplex, int lo){
     int n = simplex -> size1;
     for(int i=0; i<n+1;i++){
@@ -199,6 +213,8 @@ void reduce(gsl_matrix* simplex, int lo){
     }
 }
 
+
+//The function itself
 void amoeba( double f(gsl_vector* x),
               gsl_vector* x, gsl_vector* step, double eps){
     int n = x->size;
@@ -295,6 +311,8 @@ void amoeba( double f(gsl_vector* x),
  */
 
 
+
+//Functions for testing the amoeba
 double xiAnden(gsl_vector* xs){
     double x = gsl_vector_get(xs,0);
     double y = gsl_vector_get(xs,1);
@@ -311,6 +329,9 @@ double himmelblau(gsl_vector* xs){
     double y = gsl_vector_get(xs,1);
     return pow((x*x+y-11),2)+pow((x+y*y-7),2);
 }
+
+
+//Functions for minimizing the higgs value set
 double breitWigner(gsl_vector* xs,double E){
     double m = gsl_vector_get(xs,0);
     double Gamma = gsl_vector_get(xs,1);
@@ -324,6 +345,8 @@ double deviation_BW(gsl_vector* xs){
     }
     return val;
 }
+
+
 int main(){
     FILE* exB = fopen("out.exB.txt","w");
     //vector for norm function
@@ -379,6 +402,8 @@ int main(){
     gsl_vector_set(step,0,10);
     gsl_vector_set(step,1,1);
     gsl_vector_set(step,2,1);
+
+    //Finding the minimum of the deviation_BW to find the parameters of BW, "finding" the higgs
     qnewton(deviation_BW,x,0.001);
     printf("Higgs values qnewton:\n");
     printf("(m,Gamma,A)=(%g,%g,%g)\n", gsl_vector_get(x,0),gsl_vector_get(x,1),gsl_vector_get(x,2));
@@ -386,9 +411,11 @@ int main(){
     printf("Higgs values amoeba:\n");
     printf("(m,Gamma,A)=(%g,%g,%g)\n", gsl_vector_get(z,0),gsl_vector_get(z,1),gsl_vector_get(z,2));
 
+    //Printing for plotting
     for(int i =0; i<30;i++){
         fprintf(exB,"%g %g %g %g %g\n",E[i],sig[i],dsig[i], breitWigner(x,E[i]), breitWigner(z,E[i]));
     }
+    /*
     gsl_vector* reflected = gsl_vector_calloc(2);
     gsl_vector_set(y,1,0);
     gsl_vector_set(y,0,-1);
@@ -396,6 +423,7 @@ int main(){
     gsl_vector_set(reflected,0,1);
     gsl_vector_set(y_step,0,0);
     gsl_vector_set(y_step,1,2);
+    */
 
     gsl_vector_free(x);
     gsl_vector_free(y);

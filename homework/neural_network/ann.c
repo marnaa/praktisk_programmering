@@ -17,6 +17,9 @@ double gaussWave_int(double x){
     return -0.5*exp(-x*x);
 }
 
+//Allocating the memory to the ann structure
+//Note to handle all the requirements we both integral and derivative, first and second, of the
+//training function
 ann*   ann_alloc   (int n,double(*f)(double),double(*f_diff)(double),double(*f_diffdiff)(double),double(* f_int)(double )){
     ann* network = malloc(sizeof(ann));
     gsl_vector* params = gsl_vector_alloc(3*n);
@@ -32,6 +35,7 @@ void   ann_free    (ann* network){
     gsl_vector_free(network->params);
 }
 
+
 double ann_response(ann* network,double x){
     int n = (network->params)->size;
     double Fp = 0;
@@ -46,6 +50,7 @@ double ann_response(ann* network,double x){
     return Fp;
 }
 
+//From a trained netwotk find the first derivative of the function
 double ann_diff(ann* network, double x){
     int n = (network->params)->size;
     double Fp = 0;
@@ -59,6 +64,8 @@ double ann_diff(ann* network, double x){
     }
     return Fp;
 }
+
+//From a trained netwotk find the second derivative of the function
 double ann_diffdiff(ann* network, double x){
     int n = (network->params)->size;
     double Fp = 0;
@@ -73,6 +80,7 @@ double ann_diffdiff(ann* network, double x){
     return Fp;
 }
 
+//From a trained netwotk find the integral of the function from a to b
 double ann_int(ann* network, double a, double b){
     int n = (network->params)->size;
     double Fp = 0;
@@ -87,6 +95,8 @@ double ann_int(ann* network, double a, double b){
     return Fp;
 }
 
+
+//cost function for the trained interpolator network
 double ann_cost(ann* network, gsl_vector* xs, gsl_vector* ys){
     int N = xs->size;
     double cost = 0;
@@ -100,6 +110,7 @@ double ann_cost(ann* network, gsl_vector* xs, gsl_vector* ys){
     return cost/N;
 }
 
+//The cost function for the untrained neural network, therefore wild.
 double annWild_cost(ann* network, double diffeq_pow2(double responseofX, ann* network),
                     double a, double b,double boundary_x,double boundary_y
                     ,double boundary_ydot){
@@ -117,6 +128,7 @@ double annWild_cost(ann* network, double diffeq_pow2(double responseofX, ann* ne
     return val;
 }
 
+//train functions for the trained and the wild neural networks, respectively.
 void   ann_train   (ann* network,gsl_vector* xs,gsl_vector* ys){
     ann_amoeba(ann_cost,network,xs,ys,1e-7);
 }

@@ -1,8 +1,9 @@
-int of normal dist 1 sigma = 0.662405 error = 0.0204281 N = 10000
-int of normal dist 2 sigma [quasi]= 0.954521 error = 0.000129384 N = 10000
+int of normal dist, 2 sigma [rand] = 0.988773 error = 0.0219598 N = 10000
+int of normal dist, 2 sigma [quasi]= 0.954521 error = 0.000129384 N = 10000
+int of normal dist, 2 sigma [strata]= 0.933768 error = 0 N = 10000
 Val of ex b) integral (exact val = 1.3932): 
-rand = 1.36083 (err = 0.0267461), quasi = 1.37844 (err = 0.0106229), strata = 1.35181 (err = 0.0138519) at N = 10000 
-rand = 1.41273 (err = 0.0300932), quasi = 1.36785 (err = 0.0120778), strata = 1.36128 (err = 0.0308749) at N = 20000 
-rand = 1.4605 (err = 0.0515168), quasi = 1.38058 (err = 0.00415132), strata = 1.35094 (err = 0.0447585) at N = 30000 
-rand = 1.3881 (err = 0.0219002), quasi = 1.37543 (err = 0.0155539), strata = 1.379 (err = 0.0571975) at N = 40000 
-rand = 1.36921 (err = 0.0141244), quasi = 1.37933 (err = 0.0323252), strata = 1.3714 (err = 0.0702581) at N = 50000 
+rand = 1.36117 (err = 0.023582), quasi = 1.37844 (err = 0.0106229), strata = 1.39033 (err = 0.0725928) at N = 10000 
+rand = 1.32971 (err = 0.0186132), quasi = 1.36785 (err = 0.0120778), strata = 1.34843 (err = 0.0726824) at N = 20000 
+rand = 1.34029 (err = 0.0152637), quasi = 1.38058 (err = 0.00415132), strata = 1.38969 (err = 0.0727501) at N = 30000 
+rand = 1.35301 (err = 0.0171402), quasi = 1.37543 (err = 0.0155539), strata = 1.37574 (err = 0.0729448) at N = 40000 
+rand = 1.4133 (err = 0.0377846), quasi = 1.37933 (err = 0.0323252), strata = 1.36914 (err = 0.0732205) at N = 50000 

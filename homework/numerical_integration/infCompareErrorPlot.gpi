@@ -4,9 +4,9 @@ set ylabel "error"
 set output "infCompareErrorPlot.png"
 set title "integrals of exp(-x^2) error"
 set key left top
-plot "out.infCompare.txt" using 1:11 with lines title "[0,inf]" \
-,"out.infCompare.txt" using 1:12 with lines title "[-inf,0]"\
-,"out.infCompare.txt" using 1:13 with lines title "[-inf,inf]"\
-,"out.infCompare.txt" using 1:14 with lines title "[0,inf] (GSL)" \
-,"out.infCompare.txt" using 1:15 with lines title "[-inf,0] (GSL)"\
-,"out.infCompare.txt" using 1:16 with lines title "[-inf,inf] (GSL)"\
+plot "out.infCompare.txt" using 1:11 with points title "[0,inf]" \
+,"out.infCompare.txt" using 1:12 with points title "[-inf,0]"\
+,"out.infCompare.txt" using 1:13 with points title "[-inf,inf]"\
+,"out.infCompare.txt" using 1:14 with points title "[0,inf] (GSL)" \
+,"out.infCompare.txt" using 1:15 with points title "[-inf,0] (GSL)"\
+,"out.infCompare.txt" using 1:16 with points title "[-inf,inf] (GSL)"\

@@ -17,7 +17,7 @@ int binsearch(gsl_vector* x, double z){
 	return i;
 	}
 
-//Defining the qsline structure
+//Defining the cspline structure
 typedef struct{gsl_vector *x, *y, *b, *c, *d;} cspline;
 
 cspline* cspline_make(gsl_vector* x, gsl_vector* y){
@@ -112,6 +112,7 @@ double ceval(cspline* s, double z) {
     return val;
 }
 
+//Finding the integral of the spline in z
 double cint(cspline* s, double z){
     int j = binsearch(s->x,z);
     double intval = 0;
@@ -140,6 +141,7 @@ double cint(cspline* s, double z){
     return intval;
 }
 
+//differential of the spline
 double cdiff(cspline* s, double z){
     int j = binsearch(s->x,z);
     double bj = gsl_vector_get(s->b,j);
@@ -161,6 +163,8 @@ void cspline_free(cspline* s){
 	gsl_vector_free(s->d);
 	free(s);
 	}
+
+
 int main(){
     FILE* cxandy = fopen("out.cxy.txt","w");
     FILE* cout = fopen("out.cdata.txt","w");

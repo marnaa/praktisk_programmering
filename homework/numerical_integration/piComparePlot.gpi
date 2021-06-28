@@ -1,6 +1,6 @@
 set terminal png
 set xlabel "abs rel"
-set ylabel "Pi-intval"
+set ylabel "Pi minus int value"
 set output "piComparePlot.png"
 set key left top
 set yrange [-0.01:]

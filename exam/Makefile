@@ -5,9 +5,9 @@ LDLIBS += $(shell gsl-config --libs)
 
 .PHONEY: clean all
 
-all: out.test.txt out.eigval_check.txt
+all: out.matrix_test.txt out.eigval_check.txt
 
-out.test.txt: main
+out.matrix_test.txt: main
 	@./$< > $@
 
 out.eigval_check.txt: main

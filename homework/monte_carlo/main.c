@@ -122,7 +122,7 @@ double strata(int dim, int N, double a[],double b[],
     double err = fabs(mean_reuse-mean)*V;
     double tol = acc+fabs(integ)*eps;
     if(err<tol){
-        *error += err;
+        *error += err*err;
         return integ;
     }
     double a2[dim], b2[dim];
@@ -184,6 +184,7 @@ int main(){
     double b_dim[] = {1.,1.};
     double norm_sig1, err_sig1;
     double norm_sig2, err_sig2;
+    double norm_sig2_str, err_sig2_str;
     double res_gam, err_gam;
     double res_gam_str, err_gam_str;
     double res_gam_quasi, err_gam_quasi;
@@ -192,21 +193,25 @@ int main(){
         int N_gam = 10000+10000*i;
         randMC_int(dimDim,N_gam,a_dim,b_dim,dim_special,&res_gam,&err_gam);
         quasiMC_int(dimDim,N_gam,a_dim,b_dim,dim_special,&res_gam_quasi,&err_gam_quasi);
-        fprintf(compare,"%i %g %g %g %g %g\n",N_gam, res_gam,res_gam_quasi,err_gam,err_gam_quasi,M_PI);
+        res_gam_str = strata(dimDim,N_gam,a_dim,b_dim,dim_special,&err_gam_str,0.005,0.01,0,0);
+        fprintf(compare,"%i %g %g %g %g %g %g %g\n",N_gam, res_gam,res_gam_quasi,err_gam,
+                err_gam_quasi,M_PI,res_gam_str,sqrt(err_gam_str));
     }
 
-    randMC_int(dim,N,a,b,norm_dist_sig1,&norm_sig1, &err_sig1);
+    randMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig1, &err_sig1);
     //randMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2, &err_sig2);
     quasiMC_int(dim,N,a,b,norm_dist_sig2,&norm_sig2,&err_sig2);
-    printf("int of normal dist 1 sigma = %g error = %g N = %i\n",norm_sig1, err_sig1, N);
-    printf("int of normal dist 2 sigma [quasi]= %g error = %g N = %i\n",norm_sig2, err_sig2, N);
+    norm_sig2_str = res_gam_str = strata(dim,N,a,b,norm_dist_sig2,&err_gam_str,0.005,0.01,0,0);
+    printf("int of normal dist, 2 sigma [rand] = %g error = %g N = %i\n",norm_sig1, err_sig1, N);
+    printf("int of normal dist, 2 sigma [quasi]= %g error = %g N = %i\n",norm_sig2, err_sig2, N);
+    printf("int of normal dist, 2 sigma [strata]= %g error = %g N = %i\n",norm_sig2_str, sqrt(err_sig2_str), N);
     printf("Val of ex b) integral (exact val = 1.3932): \n");
     for(int i = 0;i<5;i++){
         int N_gam = 10000+10000*i;
         randMC_int(dimGam,N_gam,a_gam,b_gam,gam,&res_gam,&err_gam);
         quasiMC_int(dimGam,N_gam,a_gam,b_gam,gam,&res_gam_quasi,&err_gam_quasi);
         res_gam_str = strata(dimGam,N_gam,a_gam,b_gam,gam,&err_gam_str,0.005,0.01,0,0);
-        printf("rand = %g (err = %g), quasi = %g (err = %g), strata = %g (err = %g) at N = %i \n", res_gam, err_gam,res_gam_quasi,err_gam_quasi,res_gam_str, err_gam_str,N_gam);
+        printf("rand = %g (err = %g), quasi = %g (err = %g), strata = %g (err = %g) at N = %i \n", res_gam, err_gam,res_gam_quasi,err_gam_quasi,res_gam_str, sqrt(err_gam_str),N_gam);
     }
     fclose(compare);
     return 0;

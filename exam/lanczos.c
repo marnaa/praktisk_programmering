@@ -29,30 +29,34 @@ void GS_ortho_arnoldi(gsl_vector* q, gsl_matrix* Q, gsl_matrix* H, int k){
         gsl_blas_daxpy(-h_ik,&qi.vector,q);
     }
 }
-
+// GS_ortho unlike GS_arnoldi uses, that H is a tridiagonalized matrix so only the previous matrix has an influence
+// Therefore only that is included and has an influence
 void GS_ortho(gsl_vector* q, gsl_matrix* Q, gsl_matrix* H, int k) {
+    //in the first iteration obviously there are no other vectors to consider
+    //therefore, this seperate case.
     if (k == 0) {
         gsl_vector_view qi = gsl_matrix_column(Q, k);
         double h_ik;
         gsl_blas_ddot(&qi.vector, q, &h_ik);
         //printf("(%i,%i), h = %g \n",i,k,h_ik);
-        gsl_matrix_set(H, k, k, h_ik);
+        gsl_matrix_set(H, k, k, h_ik); //saving the inner products in H
         gsl_blas_daxpy(-h_ik, &qi.vector, q);
     }
     else {
+        //because of tridiagonal we need only to add this limited sum
         for (int i = k - 1; i <= k; i++) {
             gsl_vector_view qi = gsl_matrix_column(Q, i);
             double h_ik;
             gsl_blas_ddot(&qi.vector, q, &h_ik);
             //printf("(%i,%i), h = %g \n",i,k,h_ik);
             gsl_matrix_set(H, i, k, h_ik);
-            gsl_blas_daxpy(-h_ik, &qi.vector, q);
+            gsl_blas_daxpy(-h_ik, &qi.vector, q); //q_(i+1) = q_(i+1) - h_(i)(i)*q_i -h_(i)(i-1)q_(i-1)
         }
     }
 }
 
 
-//q0 is destroyed, but can be found in Q
+//q0 is destroyed, but can be found in Q, q0 is the random vector from which the others are orthogonalized
 void lanczos(gsl_matrix* A, gsl_matrix* Q, gsl_matrix* H, gsl_vector* q0){
 
     //Checking the sizes of the matrices
@@ -81,6 +85,8 @@ void lanczos(gsl_matrix* A, gsl_matrix* Q, gsl_matrix* H, gsl_vector* q0){
         // Normalising the new q0 and saving the norm
         double norm= gsl_blas_dnrm2(q0);
         gsl_vector_scale(q0,1./norm);
+
+        //loop here to get the final coloumn of H
         if(k!=(n-1)) {
             gsl_matrix_set(H, k + 1, k, norm);
 

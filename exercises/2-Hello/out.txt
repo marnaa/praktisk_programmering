@@ -1,1 +1,0 @@
-hello, Value of r = 1.414214 

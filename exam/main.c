@@ -34,6 +34,7 @@ int main(){
     for(int i=0; i<n; i++){
         for(int j=i; j<n; j++){
             double Aij = number_size*RAND;
+            Aij -= number_size*RAND;
             gsl_matrix_set(A,i,j,Aij);
             gsl_matrix_set(A,j,i,Aij);
         }
@@ -45,7 +46,7 @@ int main(){
     //Calling lanczos
     lanczos(A,Q,H,q0);
     lanczos(A,Qm,Hm,q0);
-    printf("TESTING THAT THE MATRICES ARE FULFILLING THE RELATIONS\n\n");
+    printf("TESTING THAT THE MATRICES ARE FULFILLING THE RELATIONS GIVEN BY THEORY\n\n");
 
     printf("m=n=10\n");
     printf("A:\n");
@@ -82,10 +83,10 @@ int main(){
     printf("A:\n");
     matrix_print(cpyA,stdout);
     printf("\n");
-    printf("V:\n");
+    printf("T:\n");
     matrix_print(Hm,stdout);
     printf("\n");
-    printf("T:\n");
+    printf("V:\n");
     matrix_print(Qm,stdout);
     printf("\n");
 
@@ -102,7 +103,7 @@ int main(){
 
 
     fprintf(eigval_check,"CHECKING HOW WELL THE EIGENVALUES OF T APPROXIMATES THE HIGHEST EIGENVALUE(S) OF A\n"
-                         "WITH DIFFERENT SIZES OF KYRLOV BASES \n\n");
+                         "WITH DIFFERENT SIZES OF KYRLOV BASES [RANK(A)=10] \n\n");
 
     //Finding the A eigenvalues
     gsl_matrix* va = gsl_matrix_calloc(n,n);
@@ -128,7 +129,7 @@ int main(){
         gsl_matrix* vh = gsl_matrix_calloc(i,i);
         gsl_vector* w = gsl_vector_alloc(i);
         gsl_vector* indexvec = gsl_vector_alloc(i);
-        //Doing lanczos and finding eigenvalues of H
+        //Doing lanczos and finding eigenvalues of H through the jacobi routines from homework
         lanczos(a,q,h,q0);
         jacobi_diag_opt(h,vh);
 
@@ -161,7 +162,7 @@ int main(){
         fprintf(eigval_check," \n");
         fprintf(eigval_check," \n");
     }
-
+    //Freeing and closing hopefully everything
     gsl_matrix_free(va);
     gsl_matrix_free(acpy);
     gsl_matrix_free(A);

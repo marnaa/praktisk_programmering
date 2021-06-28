@@ -26,6 +26,8 @@ double intrun(double f(double), double f2, double f3, double a, double b,
     double q = (b-a)/(4.)*(f1+f2+f3+f4);
     double tol = acc + eps*fabs(Q);
     double err = fabs(Q-q);
+    //Assesment of the error compared to the tolerance
+    //If error okay, if not further splitting
     if(err< tol){
         if(*eta<nrec){
             *eta=nrec;
@@ -39,6 +41,8 @@ double intrun(double f(double), double f2, double f3, double a, double b,
         return Q1+Q2;
     }
 }
+
+//Driver for the integration routine
 double integrater(double f(double), double a,
                   double b, double acc, double eps, int* eta,double* error){
     double f2 = f(a+2.*(b-a)/6.), f3 = f(a+3.*(b-a)/6);
@@ -50,6 +54,7 @@ double integrater(double f(double), double a,
 
 }
 
+//Trapez run only different from intrun in llowing subtitutions through h
 double trapezrun(double h(double f(double), double A, double B, double x),
               double f(double), double h2, double h3, double a, double b,double A, double B,
               double acc, double eps,double nrec, int* eta, double* error) {
@@ -73,13 +78,18 @@ double trapezrun(double h(double f(double), double A, double B, double x),
         return Q1 + Q2;
     }
 }
+
+
 //x -> ((b-a)x+(b+a))/2
+//Function for doing the clebshaw-cutis substitution
 double h(double f (double), double a, double b,double x){
     double gcosx=((b-a)/2*cos(x)+(b+a)/2);
     double hx = f(gcosx)*sin(x)*(b+a)/2;
     return hx;
 }
 
+
+//Functions for when different limits are infinity
 double infinf(double f (double),double a, double b, double x) {
     double gcosx = (cos(x)/(1-cos(x)*cos(x)));
     double hx = f(gcosx) * sin(x) * (1+cos(x)*cos(x))/pow((1-cos(x)*cos(x)),2);
@@ -95,6 +105,9 @@ double aIsInf(double f (double), double a, double b,double x) {
     double hx = f(gcosx) * sin(x) * 2/pow(cos(x)+1,2);
     return hx;
 }
+
+
+//Driver for clebshaw-curtis integration with possibility for things being infinite
 double CC_integrater(double f(double), double a,
                   double b, double acc, double eps,int* eval, double* error){
     double Q, x2, x3, f2, f3;
@@ -134,6 +147,7 @@ double CC_integrater(double f(double), double a,
 }
 
 
+//Testing functions
 double Fa1(double x){
     return sqrt(x);
 }
@@ -158,24 +172,32 @@ double ekspSq(double x){
     return exp(-(x*x));
 }
 
+
 int main(){
     FILE* pi_compare = fopen("out.piCompare.txt","w");
     FILE* inf_compare = fopen("out.infCompare.txt","w");
     int lol, lol_CC;
     double error_CC, error_norm;
     double a = 0., b=1., acc = 0.0001, eps = 0.;
+
+
+    //Integrating the test functions with the normal integrator and CC
     double fa1 = integrater(Fa1,a,b,acc,eps,&lol,&error_norm);
     double fa2 = integrater(Fa2,a,b,acc,eps,&lol,&error_norm);
     double ha1 = CC_integrater(Fa1,a,b,acc,eps,&lol_CC,&error_CC);
     double ha2 = CC_integrater(Fa2,a,b,acc,eps,&lol_CC,&error_CC);
     double hb1 = CC_integrater(Fb1,a,b,acc,eps,&lol_CC,&error_CC);
     double hb2 = CC_integrater(Fb2,a,b,acc,eps,&lol_CC,&error_CC);
+
+
     printf("No var change: int(sqrt(x),0..1)= %.16f\n",fa1);
     printf("var change: int(sqrt(x),0..1)= %.16f ",ha1);
     printf("var change: int(1/sqrt(x),0..1)= %.16f int(ln(x)/sqrt(x),0..1)=%.16f\n",hb1,hb2);
     printf("acc= %g ; eps = %g",acc,eps);
     printf( "Int: int(4*sqrt(1-x^2),0..1)=%.16f\n", fa2);
     printf("CC-int: int(4*sqrt(1-x^2),0..1)=%.16f and error = %.16f\n",ha2,error_CC);
+
+    //Testing against gsl_integrator etc.
     double loop_acc[]={0.0001,0.0005,0.001,0.005,0.01,0.05,0.06,0.07,0.08};
     gsl_integration_workspace * w
             = gsl_integration_workspace_alloc (10000);
@@ -185,6 +207,8 @@ int main(){
             = gsl_integration_workspace_alloc (10000);
     gsl_integration_workspace * p
             = gsl_integration_workspace_alloc (10000);
+
+
     double err, err_CC;
     int eta, eta_CC;
     int ekspM_eval, ekspP_eval, ekspSq_eval;

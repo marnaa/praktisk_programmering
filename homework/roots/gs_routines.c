@@ -17,7 +17,7 @@ void matrix_print(gsl_matrix* A,FILE* fil){
         fprintf(fil,"\n");
     }
 }
-//Gram-Schmidt orthogonalisation function
+//Gram-Schmidt orthogonalisation function taken from the homework of that week
 void gs_decomp(gsl_matrix* A, gsl_matrix* R) {
     gsl_vector *ai = gsl_vector_alloc((A->size1));
     gsl_vector *qi = gsl_vector_alloc((A->size1));

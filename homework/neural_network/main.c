@@ -1,6 +1,7 @@
 #include "ann_declarations.h"
 #include <gsl/gsl_specfunc.h>
 
+//Defining the training functions
 double gauss(double x){
     return exp(-x*x);
 }

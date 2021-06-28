@@ -86,14 +86,30 @@ void gs_invers(gsl_matrix *Q, gsl_matrix* R, gsl_matrix* X){
 int main(){
     FILE* gstest = fopen("out.gstest.txt","w");
     int n = 10;
+    int tall = 13;
     int m = 10;
     gsl_matrix *A = gsl_matrix_alloc(n,m);
+    gsl_matrix *Atall = gsl_matrix_alloc(tall,m);
+    gsl_matrix *Rtall = gsl_matrix_alloc(m,m);
+    gsl_matrix *Atall_test = gsl_matrix_calloc(m,m);
+    gsl_matrix *Atall_copy = gsl_matrix_alloc(tall,m);
+
+
     gsl_matrix *R = gsl_matrix_alloc(m,m);
     gsl_matrix *X = gsl_matrix_alloc(m,m);
     gsl_vector *x =gsl_vector_alloc(m);
     gsl_vector *b =gsl_vector_alloc(m);
 
+    //Setting values for the tall matrix
+    for(int j=0; j<(Atall->size2); j++){
+        for(int i = 0; i<(Atall->size1);i++){
+            double Aij = (double) rand()/RAND_MAX*40;
+            Aij-=(double) rand()/RAND_MAX*40;
+            gsl_matrix_set(Atall,i,j,Aij);
+        }
+    }
 
+    //Setting values for the square matrix
     for(int j=0; j<(A->size2); j++){
         double bj = (double) rand()/RAND_MAX*40;
         bj-=(double) rand()/RAND_MAX*40;
@@ -104,6 +120,8 @@ int main(){
             gsl_matrix_set(A,i,j,Aij);
         }
     }
+
+    //Copy matrices for checking the proper relations
     gsl_vector *bcopy = gsl_vector_alloc(m);
     gsl_matrix *AA = gsl_matrix_alloc(n,m);
     gsl_matrix *XX = gsl_matrix_alloc(n,m);
@@ -113,29 +131,66 @@ int main(){
     gsl_matrix_memcpy(Acopy,A);
     gsl_vector_memcpy(bcopy,b);
     gsl_matrix_memcpy(AA,A);
+    gsl_matrix_memcpy(Atall_copy,Atall);
+
+    //The actual decomposition
+    //tall matrix
+    gs_decomp(Atall,Rtall);
+
+    //square matrix
     gs_decomp(A,R);
     gs_solve(A,R,b,x);
     gs_invers(A,R,X);
+
+
+    //Making the tall test Q^T Q =1 QR=A, R upper triangle
+    fprintf(gstest,"TALL TEST\n \n ");
+    fprintf(gstest,"R upper triangle ?\n ");
+    matrix_print(R,gstest);
+
+    gsl_blas_dgemm(CblasTrans,CblasNoTrans,1.,A,A,0.,Atall_test);
+
+    fprintf(gstest,"Q^T Q = 1 ? \n");
+    matrix_print(Atall_test,gstest);
+
+    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,Atall,Rtall,-1.,Atall_copy);
+
+    fprintf(gstest,"QR-A = 0 ? \n");
+    matrix_print(Atall_copy,gstest);
+    fprintf(gstest,"\n");
+
+
+    //Making the square tests
+
+    fprintf(gstest,"SQUARE/INVERSE/SOLUTION TEST\n \n ");
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,A,R,-1.,Acopy);
     gsl_blas_dgemm(CblasTrans,CblasNoTrans,1.,A,A,0.,Qtest);
     gsl_blas_dgemv(CblasNoTrans,1.0,AA,x,-1.,bcopy);
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,AA,X,0.,XX);
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.,X,AA,0.,XXX);
+
     fprintf(gstest,"A:\n");
     matrix_print(A,gstest);
+
     fprintf(gstest,"QR-A=0?:\n");
     matrix_print(Acopy,gstest);
+
     fprintf(gstest,"(Q^T)Q=1?:\n");
     matrix_print(Qtest,gstest);
+
     fprintf(gstest,"R uppertriangle ?:\n");
     matrix_print(R,gstest);
+
     fprintf(gstest,"b:\n");
     gsl_vector_fprintf(gstest,b,"%0.3g");
+
     fprintf(gstest,"Ax-b=0 ?:\n");
     gsl_vector_fprintf(gstest,bcopy,"%0.3g");
-    fprintf(gstest,"AB=1 ?:\n");
+
+    fprintf(gstest,"A(A^(-1))=1 ?:\n");
     matrix_print(XX,gstest);
-    fprintf(gstest,"BA=1 ?:\n");
+
+    fprintf(gstest,"(A^(-1))A=1 ?:\n");
     matrix_print(XXX,gstest);
 
     FILE* time = fopen("out.time.txt","w");
@@ -182,7 +237,31 @@ int main(){
         fprintf(time,"%g %g %g\n",((double)N),timeUsed,N3);
         fprintf(compare,"%g %g %g\n",((double)N),timeUsed,gslTimeUsed);
         count++;
+        gsl_matrix_free(M);
+        gsl_matrix_free(G);
+        gsl_matrix_free(gslM);
+        gsl_vector_free(gslTau);
     }
+    //Freeing hopefully everything
+    gsl_vector_free(bcopy);
+    gsl_matrix_free(AA);
+    gsl_matrix_free(XX);
+    gsl_matrix_free(XXX);
+    gsl_matrix_free(Acopy);
+    gsl_matrix_free(Qtest);
+    gsl_matrix_free(A);
+    gsl_matrix_free(Atall);
+    gsl_matrix_free(Rtall);
+    gsl_matrix_free(Atall_test);
+    gsl_matrix_free(Atall_copy);
+    gsl_matrix_free(R);
+    gsl_matrix_free(X);
+    gsl_vector_free(x);
+    gsl_vector_free(b);
+
+    fclose(gstest);
+
+
 
 
     return 0;
